@@ -6,15 +6,11 @@ const userCtrl = require('../controllers/user')
 const auth = require('../middleware/auth')
 
 // Especificamos nuestras rutas teniendo en cuenta los metodos creados en nuestro controlador, y especificando que seran rutas que usaran el metodo POST
-// router.get('/users', userCtrl.getUsers )
-// router.get('/user/:id', userCtrl.getUser )
 router.post('/create', userCtrl.signUp )
 router.post('/signin', userCtrl.signIn )
-router.get('/users/me', async(req, res) => {
-    // View logged in user profile
-    res.send(req.user)
-})
-router.get('/', (req, res) => res.send('hello wordl'))
+router.get('/users/', userCtrl.getAll)
+router.get('/users/:id', auth, userCtrl.getById)
+router.get('/', (req, res) => res.send('hello world'))
 router.get('/tasks',auth,  (req, res) => {
     res.json([
         {
@@ -37,9 +33,7 @@ router.get('/tasks',auth,  (req, res) => {
         },
     ])
 })
-// router.get('/users', userCtrl.getUsers )
-// router.get('/users', userCtrl.getUsers )
-// router.get('/users', userCtrl.getUsers )
-// router.get('/users', userCtrl.getUsers )
+
+
 
 module.exports = router;

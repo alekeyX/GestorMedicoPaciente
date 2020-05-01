@@ -40,42 +40,31 @@ async function signIn(req, res){
     } catch (error) {
         res.status(400).send({error: `${error}`})
     }
-    // const { email, password } = req.body;
-    // const user = await User.findOne({ email: email})
-    // if(!user) return res.status(401).send("The email donesn't exists");
-    // if(user.password !== password) return res.status(401).send('Wrong Password'); //No es optimo, se debe encriptar la contra
-
-    // const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN );
-    // return res.status(200).json({token});
 }
 
-// Cerrar sesión de usuario de la aplicación
-// Metodo para array de tokens
-// async function logout(req, res) {
-//     try {
-//         req.user.tokens = req.user.tokens.filter((token) => {
-//             return token.token != req.token
-//         })
-//         await req.user.save()
-//         res.send()
-//     } catch (error) {
-//         res.status(500).send(error)
-//     }
-// }
+function getById(req, res, next ) {
+    User.findById( req.params.id, (err, data) => {
+        if(err) {
+            next(err)
+        } else {
+            res.json({message: "Usuario encontrado", data})
+        }
+    })
+}
 
-// // Cerrar sesión de todos los dispositivos
-// Metodo para array de tokens dentro el model user
-// async function logoutAll (req, res) {
-//     try {
-//         req.user.tokens.splice(0, req.user.tokens.length)
-//         await req.user.save()
-//         res.send()
-//     } catch (error) {
-//         res.status(500).send(error)
-//     }
-// }
+function getAll(req, res, next) {
+    User.find((err, data) => {
+        if (err) {
+            next (err)
+        } else {
+            res.json(data)
+        }
+    })
+}
 
 module.exports = {
     signUp,
-    signIn
+    signIn,
+    getById,
+    getAll
 }
