@@ -1,6 +1,8 @@
 // Cargamos módulos
 const User = require('../models/User')
 const db = require('../db/database')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const service = require('../services/index')
 
 
@@ -13,42 +15,65 @@ async function signUp (req, res) {
             password: req.body.password
         })
         await user.save()
-        const token = await user.generateAuthToken()
+        // const token = await user.generateAuthToken() //Generara tokena para el arreglo de tokens
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 300 })
         res.status(201).send({ user, token })
     } catch (error) {
-        res.status(400).send(error)
+        res.status(400).send({error: `${error}`})
     }
 }
 
 // Login de un usuario registrado
 async function signIn(req, res){
-    // try {
-    //     const { email, password } = req.body
-        
-    //     const user = User.findByCredentials({email, password})
-    //     console.log(user);
-        
-    //     if(!user) return res.status(401).send({message: 'No existe el usuario'})
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({email: email})        
+        if (!user) {
+            return res.status(401).send({error: 'Login failed! Check authentication credentials'})
+        }
+        const isPasswordMatch = await bcrypt.compare(password, user.password)
+        if (!isPasswordMatch) return res.status(401).send('Wrong Password')
 
-    //     const token = user.generateAuthToken()
-    //     res.status(200).send({ 
-    //         message: 'Te has logueado correctamente',
-    //         user, token
-    //     })
-    // } catch (error) {
-    //     res.status(400).send(error)
-    // }
-    User.find({ email: req.body.email }, (err, user) =>{
-        if (err) return res.status(500).send({ message: err})
-        if(!user) return res.status(404).send({message: 'No existe el usuario'})
-        // TODO hacer comparacion de password
-        req.user = user
-        res.status(200).send({
-            message: 'Te has logueado correctamente',
-            token: service.createToken(user)
-        })
-    })
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN);
+        return res.status(200).json({user, token});
+
+    } catch (error) {
+        res.status(400).send({error: `${error}`})
+    }
+    // const { email, password } = req.body;
+    // const user = await User.findOne({ email: email})
+    // if(!user) return res.status(401).send("The email donesn't exists");
+    // if(user.password !== password) return res.status(401).send('Wrong Password'); //No es optimo, se debe encriptar la contra
+
+    // const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN );
+    // return res.status(200).json({token});
 }
+
+// Cerrar sesión de usuario de la aplicación
+// Metodo para array de tokens
+// async function logout(req, res) {
+//     try {
+//         req.user.tokens = req.user.tokens.filter((token) => {
+//             return token.token != req.token
+//         })
+//         await req.user.save()
+//         res.send()
+//     } catch (error) {
+//         res.status(500).send(error)
+//     }
+// }
+
+// // Cerrar sesión de todos los dispositivos
+// Metodo para array de tokens dentro el model user
+// async function logoutAll (req, res) {
+//     try {
+//         req.user.tokens.splice(0, req.user.tokens.length)
+//         await req.user.save()
+//         res.send()
+//     } catch (error) {
+//         res.status(500).send(error)
+//     }
+// }
 
 module.exports = {
     signUp,
