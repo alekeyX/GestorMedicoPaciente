@@ -74,7 +74,7 @@ function updateUser(req, res, next) {
 }
 
 function deleteUser(req, res, next) {
-    User.findOneAndRemove(req.params.id, (err, data) => {
+    User.findByIdAndDelete(req.params.id, (err, data) => {
         if(data) {
             next(err)
         } else {

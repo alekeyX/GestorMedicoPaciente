@@ -4,7 +4,8 @@ const db = require('./db/database')
 
 mongoose.connect(db.db, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true,
   }, (err, res) => {
     if(err) {
         return console.log(`Error al conectar a la base de datos: ${err}`);

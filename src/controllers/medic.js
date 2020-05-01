@@ -2,6 +2,7 @@
 const db = require('../db/database')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const path = require('path')
 const fs = require('fs-extra')
 // Modelo médico
 const Medic = require('../models/Medic')
@@ -102,7 +103,7 @@ async function updateMedic( req, res, next ) {
 
 // Eliminar médico
 function deleteMedic( req, res, next ) {
-    Medic.findOneAndRemove( req.params.id, (err, data) => {
+    Medic.findByIdAndDelete( req.params.id, (err, data) => {
         if( data ) {
             fs.unlink(path.resolve(data.imagePath))
         }

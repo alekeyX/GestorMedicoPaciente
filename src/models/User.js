@@ -1,8 +1,9 @@
 // Cargamos los módulos que usaremos
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 const validator = require('validator')
+const uniqueValidator = require('mongoose-unique-validator')
+const jwt = require('jsonwebtoken')
 const db = require('../db/database')
 
 // Creamos el objeto del esquema con sus correspondientes campos
@@ -54,6 +55,9 @@ UserSchema.pre('save', async function (next) {
 //     return res.status(200).json({user, token});
     
 // }
+
+// Apply the uniqueValidator plugin to userSchema.
+UserSchema.plugin(uniqueValidator);
 
 const User = mongoose.model('User', UserSchema)
 
