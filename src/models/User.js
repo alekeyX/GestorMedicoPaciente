@@ -7,13 +7,14 @@ const db = require('../db/database')
 
 // Creamos el objeto del esquema con sus correspondientes campos
 const UserSchema = mongoose.Schema({
-    name:   { type: String },
-    email:  { type: String, required: true, lowercase: true, validate: value => {
-                if (!validator.isEmail(value)) {
-                    throw new Error({error: 'Invalid Email address'})
-                }
-            }},
-    password: { type: String, required: true, minLength: 6 },
+    name:       { type: String },
+    email:      { type: String, required: true, unique: true, lowercase: true, validate: value => {
+                    if (!validator.isEmail(value)) {
+                        throw new Error({error: 'Invalid Email address'})
+                    }
+                }},
+    password:   { type: String, required: true, minLength: 6 },
+    role:       { type: String }
     // tokens: [{
     //     token: {
     //         type: String,

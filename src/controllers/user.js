@@ -3,8 +3,6 @@ const User = require('../models/User')
 const db = require('../db/database')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const service = require('../services/index')
-
 
 // crear un registro
 async function signUp (req, res) {
@@ -12,11 +10,12 @@ async function signUp (req, res) {
          const user = new User ({
             email: req.body.email,
             name: req.body.name,
-            password: req.body.password
+            password: req.body.password,
+            role: req.body.role
         })
         await user.save()
         // const token = await user.generateAuthToken() //Generara tokena para el arreglo de tokens
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 300 })
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 60 * 30 })
         res.status(201).send({ user, token })
     } catch (error) {
         res.status(400).send({error: `${error}`})
@@ -34,7 +33,7 @@ async function signIn(req, res){
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) return res.status(401).send('Wrong Password')
 
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN);
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 60 * 30 });
         return res.status(200).json({user, token});
 
     } catch (error) {
@@ -62,9 +61,34 @@ function getAll(req, res, next) {
     })
 }
 
+function updateUser(req, res, next) {
+    User.findByIdAndUpdate(req.params.id, {
+        $set: req.body
+    }, (err, data) => {
+        if (err) {
+            next(err)
+        } else {
+            res.json({ message: 'Usuario actualizado', data })
+        }
+    })
+}
+
+function deleteUser(req, res, next) {
+    User.findOneAndRemove(req.params.id, (err, data) => {
+        if(data) {
+            next(err)
+        } else {
+            res.status(200).json({ message: 'Usuario eliminado', data })
+        }
+    })
+
+}
+
 module.exports = {
     signUp,
     signIn,
     getById,
-    getAll
+    getAll,
+    updateUser,
+    deleteUser
 }
