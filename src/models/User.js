@@ -8,14 +8,32 @@ const db = require('../db/database')
 
 // Creamos el objeto del esquema con sus correspondientes campos
 const UserSchema = mongoose.Schema({
-    name:       { type: String },
-    email:      { type: String, required: true, unique: true, lowercase: true, validate: value => {
-                    if (!validator.isEmail(value)) {
-                        throw new Error({error: 'Invalid Email address'})
-                    }
+    username:   { 
+        type: String,
+        required: [true, 'El nombre es necesario']
+    },
+    email:      { 
+        type: String,
+        required: [true, 'El correo es necesario'],
+        unique: true,
+        lowercase: true,
+        validate: value => {
+            if (!validator.isEmail(value)) {
+                throw new Error({error: 'Correo invalido'})
+            }
                 }},
-    password:   { type: String, required: true, minLength: 6 },
-    role:       { type: String }
+    password:   {
+        type: String,
+        required: [true, 'La contraseña es obligaotria'],
+        minLength: 6 
+    },
+    role:       { 
+        type: String,
+        Default: 'Admin'
+    },
+    token:       {
+        type: String
+    }
     // tokens: [{
     //     token: {
     //         type: String,
@@ -34,6 +52,23 @@ UserSchema.pre('save', async function (next) {
     }
     next()
 })
+
+// Método para no devolver la contraseña
+UserSchema.methods.toJSON = function() {
+    let user = this
+    let userObject = user.toObject()
+    delete userObject.password
+    return userObject
+}
+
+// Apply the uniqueValidator plugin to userSchema.
+UserSchema.plugin(uniqueValidator, {
+    message: '{PATH} debe de ser único'
+});
+
+const User = mongoose.model('User', UserSchema)
+
+module.exports = User
 
 // Generar token para el usuario para array de tokens
 // UserSchema.methods.generateAuthToken = async function() {
@@ -55,10 +90,3 @@ UserSchema.pre('save', async function (next) {
 //     return res.status(200).json({user, token});
     
 // }
-
-// Apply the uniqueValidator plugin to userSchema.
-UserSchema.plugin(uniqueValidator);
-
-const User = mongoose.model('User', UserSchema)
-
-module.exports = User

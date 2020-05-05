@@ -38,17 +38,20 @@ var upload = multer({
 
 // Rutas de médicos
 router.post('/medic', upload.single('imagePath'), medicCtrl.createMedic )
-router.post('/signin/medic', medicCtrl.signIn )
-router.put('/medic/:id', auth, upload.single('imagePath'), medicCtrl.updateMedic )
+// router.post('/signin', medicCtrl.signIn )
+router.put('/medic/:id', upload.single('imagePath'), medicCtrl.updateMedic )
 router.get('/medic', auth, medicCtrl.getAll )
 router.get('/medic/:id', auth, medicCtrl.getById )
-router.delete('/medic/:id', auth, medicCtrl.deleteMedic )
+router.delete('/medic/:id', auth,  medicCtrl.deleteMedic )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
 router.post('/signin', userCtrl.signIn )
 router.get('/users/', userCtrl.getAll)
 router.get('/users/:id', auth, userCtrl.getById)
+router.put('users/:id', auth, userCtrl.updateUser)
+router.delete('users/:id', auth, userCtrl.deleteUser)
+
 router.get('/', (req, res) => res.send('hello world'))
 router.get('/tasks',auth,  (req, res) => {
     res.json([

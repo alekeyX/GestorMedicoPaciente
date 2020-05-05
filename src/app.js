@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const router = require('./routes/index')
 const path = require('path')
+// TODO express-validator // Para validaciones en de campos en el req.body
 
 // Setup Express.js
 const app = express()
@@ -18,7 +19,7 @@ app.use('/api', router)
 
 // Hacer que la carpeta "uploads" de imágenes esté disponible públicamente
 app.use(express.static(path.join(__dirname, 'dist')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/src/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // Error favicon.ico

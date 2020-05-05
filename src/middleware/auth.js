@@ -10,7 +10,18 @@ const auth = async(req, res, next) => {
     }
     // const token = req.header('Authorization').replace('Bearer ', '')
     const token = req.headers.authorization.split(" ")[1]
-    const data = jwt.verify(token, db.SECRET_TOKEN)
+    const data = jwt.verify(token, db.SECRET_TOKEN, function(err, decoded) {
+        if(err)
+            return next(err) // Token incorrecto
+        else {
+            if(decoded.exp <= moment().unix()) {
+                // Token expirado
+                next(null, false, {message: 'Token expirado'});
+            }
+            // Token correcto
+            next(null, decoded, { scope: '*'});
+        }
+    })
     try {
         req.userId = data._id;
         next()

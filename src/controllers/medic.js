@@ -46,15 +46,15 @@ async function createMedic(req, res, next) {
 async function signIn(req, res) {
     try {
         const { username, password } = req.body
-        const medic = await Medic.findOne({username: username})        
-        if (!medic) {
+        const user = await Medic.findOne({username: username})        
+        if (!user) {
             return res.status(401).send({error: '¡Error de inicio de sesion! Verifique las credenciales de autenticación'})
         }
-        const isPasswordMatch = await bcrypt.compare(password, medic.password)
+        const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) return res.status(401).send('Contraseña erronea')
 
-        const token = jwt.sign({_id: medic._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
-        return res.status(200).json({medic, token});
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
+        return res.status(200).json({user, token});
 
     } catch (error) {
         res.status(400).send({error: `${error}`})
@@ -67,7 +67,7 @@ function getById(req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({message: "Usuario encontrado", data})
+            res.json(data)
         }
     })
 }

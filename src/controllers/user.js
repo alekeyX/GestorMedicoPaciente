@@ -1,21 +1,25 @@
 // Cargamos módulos
-const User = require('../models/User')
 const db = require('../db/database')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+
+// Cargamos modelos
+const Medic = require('../models/Medic')
+const User = require('../models/User')
 
 // crear un registro
 async function signUp (req, res) {
     try {
          const user = new User ({
             email: req.body.email,
-            name: req.body.name,
+            username: req.body.username,
             password: req.body.password,
             role: req.body.role
         })
         await user.save()
         // const token = await user.generateAuthToken() //Generara tokena para el arreglo de tokens
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 60 * 30 })
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
+        user.token = token
         res.status(201).send({ user, token })
     } catch (error) {
         res.status(400).send({error: `${error}`})
@@ -25,19 +29,32 @@ async function signUp (req, res) {
 // Login de un usuario registrado
 async function signIn(req, res){
     try {
-        const { email, password } = req.body
-        const user = await User.findOne({email: email})        
+        const { username, password } = req.body
+        const user = await User.findOne({username: username})        
+        const medic = await Medic.findOne({username: username}) 
+        // console.log(user, medic);
+        
         if (!user) {
-            return res.status(401).send({error: 'Login failed! Check authentication credentials'})
+            return res.status(401).send({message: 'Nombre incorrecto'})
         }
-        const isPasswordMatch = await bcrypt.compare(password, user.password)
-        if (!isPasswordMatch) return res.status(401).send('Wrong Password')
-
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 60 * 30 });
-        return res.status(200).json({user, token});
+        
+        if(user) {
+            const isPasswordMatch = await bcrypt.compare(password, user.password)
+            if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
+            const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: 60 });
+            user.token = token
+            return res.status(200).json({user, token});
+        } else {
+            if (medic) {
+                const isPasswordMatch = await bcrypt.compare(password, medic.password)
+                if (!isPasswordMatch) return res.status(401).send('Wrong Password')
+                const token = jwt.sign({_id: medic._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
+                return res.status(200).json({medic, token});
+            }
+        }
 
     } catch (error) {
-        res.status(400).send({error: `${error}`})
+        res.status(400).send({error: `${error}`})        
     }
 }
 
@@ -46,7 +63,7 @@ function getById(req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({message: "Usuario encontrado", data})
+            res.json(data)
         }
     })
 }
