@@ -13,16 +13,20 @@ const MedicSchema = mongoose.Schema ({
                     if (!validator.isEmail(value)) {
                         throw new Error({error: 'Direccion de correo invalida'})
                     }
-                 }},
+                    }},
     genero:      { type: String },
     address:     { type: String },
     phone:       { type: Number },
     specialty:   { type: String },
-    imagePath:   { type: String }
+    imagePath:   { type: String },
+    token:       {
+        type: String
+    }
 }, {
     timestamps: true
 })
 
+// Antes de almacenar la contraseña en la base de datos la encriptamos con Bcrypt, esto es posible gracias al middleware de mongoose
 MedicSchema.pre('save', async function (next) {
     const user = this
     if (user.isModified('password')) {
@@ -30,6 +34,14 @@ MedicSchema.pre('save', async function (next) {
     }
     next()
 })
+
+// Método para no devolver la contraseña
+MedicSchema.methods.toJSON = function() {
+    let user = this
+    let userObject = user.toObject()
+    delete userObject.password
+    return userObject
+}
 
 // Apply the uniqueValidator plugin to userSchema.
 MedicSchema.plugin(uniqueValidator, {

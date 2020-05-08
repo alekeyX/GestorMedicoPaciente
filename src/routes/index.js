@@ -38,7 +38,7 @@ var upload = multer({
 
 // Rutas de médicos
 router.post('/medic', upload.single('imagePath'), medicCtrl.createMedic )
-// router.post('/signin', medicCtrl.signIn )
+router.post('/medic/signin', medicCtrl.signIn )
 router.put('/medic/:id', upload.single('imagePath'), medicCtrl.updateMedic )
 router.get('/medic', auth, medicCtrl.getAll )
 router.get('/medic/:id', auth, medicCtrl.getById )

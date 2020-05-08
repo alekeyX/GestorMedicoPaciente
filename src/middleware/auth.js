@@ -14,7 +14,6 @@ const auth = async(req, res, next) => {
     // console.log(decoded)
     try {
         req.userId = decoded._id;
-
         next()
     } catch (error) {
         res.status(401).send({ message: 'No autorizado para acceder a este recurso' })

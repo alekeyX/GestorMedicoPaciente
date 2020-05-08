@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const path = require('path')
 const fs = require('fs-extra')
+const mongoose = require('mongoose')
 // Modelo médico
 const Medic = require('../models/Medic')
 
@@ -16,7 +17,7 @@ async function createMedic(req, res, next) {
             image = req.file.path
         }
     const medic = new Medic ({
-            // _id: new mongoose.Types.ObjectId(),
+            _id: new mongoose.Types.ObjectId(),
             username: req.body.username,
             password: req.body.password,
             firstName: req.body.firstName,
@@ -30,15 +31,13 @@ async function createMedic(req, res, next) {
             imagePath: image
         });
         await medic.save()
-        const token = jwt.sign({_id: medic._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
+        // const token = jwt.sign({_id: medic._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
+        // medic.token = token
         res.status(201).send({
             message: "Médico registrado satisfactoriamente!",
-            medic, token 
-        }).catch(err => {
-            next(err)
         })
     } catch (error) {
-        res.status(400).send({error: `${error}`})
+        res.status(400).send({message: `${error}`})
     }
 }
 
@@ -48,16 +47,17 @@ async function signIn(req, res) {
         const { username, password } = req.body
         const user = await Medic.findOne({username: username})        
         if (!user) {
-            return res.status(401).send({error: '¡Error de inicio de sesion! Verifique las credenciales de autenticación'})
+            return res.status(401).send({message: 'Nombre incorrecto'})
         }
         const isPasswordMatch = await bcrypt.compare(password, user.password)
-        if (!isPasswordMatch) return res.status(401).send('Contraseña erronea')
+        if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
 
         const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
-        return res.status(200).json({user, token});
+        user.token = token
+        return res.status(200).json(user);
 
     } catch (error) {
-        res.status(400).send({error: `${error}`})
+        res.status(400).send({message: `${error}`})
     }
 }
 
