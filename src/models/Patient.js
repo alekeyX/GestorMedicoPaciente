@@ -8,7 +8,7 @@ const PatientSchema = mongoose.Schema ({
     password:    { type: String, required: true },
     firstName:   { type: String, required: true },
     lastName:    { type: String, required: true },
-    ci:          { type: Number, required: true },
+    ci:          { type: String, required: true },
     age:         { type: Number, required: true },
     role:        { type: String, required: true },
     email:       {  type: String, required: true, unique: true, lowercase: true, validate: value => {
@@ -17,7 +17,7 @@ const PatientSchema = mongoose.Schema ({
                     }
                     }},
     genero:      { type: String },
-    ethnic:      { type: String },
+    ethnicity:   { type: String },
     maritalStatus:      { type: String },
     ocupation:   { type: String },
     placeBirth:  { type: String },
@@ -25,9 +25,7 @@ const PatientSchema = mongoose.Schema ({
     phone:       { type: Number },
     medic:       { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
     imagePath:   { type: String },
-    token:       {
-        type: String
-    }
+    token:       { type: String }
 }, {
     timestamps: true
 })

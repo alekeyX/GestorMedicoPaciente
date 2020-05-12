@@ -28,7 +28,7 @@ async function createPatient(req, res, next) {
             email: req.body.email,
             role: req.body.role,
             genero: req.body.genero,
-            ethnic: req.body.ethnic,
+            ethnicity: req.body.ethnicity,
             maritalStatus: req.body.maritalStatus,
             ocupation: req.body.ocupation,
             placeBirth: req.body.placeBirth,
@@ -36,7 +36,7 @@ async function createPatient(req, res, next) {
             phone: req.body.phone,
             medic: req.body.medic,
             imagePath: image
-        });
+        });        
         await patient.save()
         // const token = jwt.sign({_id: patient._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
         // patient.token = token
@@ -44,7 +44,7 @@ async function createPatient(req, res, next) {
             message: "Paciente registrado satisfactoriamente!",
         })
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        res.status(400).send({message: error})
     }
 }
 
