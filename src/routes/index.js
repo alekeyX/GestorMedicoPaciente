@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require('uuid')
 // Cargamos controladores
 const userCtrl = require('../controllers/user')
 const medicCtrl = require('../controllers/medic')
+const patientCtrl = require('../controllers/patient')
 const auth = require('../middleware/auth')
 
 // Multer configuracion de subida de archivos
@@ -43,6 +44,15 @@ router.put('/medic/:id', upload.single('imagePath'), medicCtrl.updateMedic )
 router.get('/medic', auth, medicCtrl.getAll )
 router.get('/medic/:id', auth, medicCtrl.getById )
 router.delete('/medic/:id', auth,  medicCtrl.deleteMedic )
+
+// Rutas de pacientes
+router.post('/patient', upload.single('imagePath'), patientCtrl.createPatient )
+router.post('/patient/signin', patientCtrl.signIn )
+router.get('/patients/:id', patientCtrl.getPatient )
+router.put('/patient/:id', upload.single('imagePath'), patientCtrl.updatePatient )
+router.get('/patient', patientCtrl.getAll )
+router.get('/patient/:id',  patientCtrl.getById )
+router.delete('/patient/:id',   patientCtrl.deletePatient )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )

@@ -6,46 +6,53 @@ const path = require('path')
 const fs = require('fs-extra')
 const mongoose = require('mongoose')
 // Modelo médico
+const Patient = require('../models/Patient')
 const Medic = require('../models/Medic')
 
 // Crear un registro
-async function createMedic(req, res, next) {
+async function createPatient(req, res, next) {
     try {
         if( !req.file ){
             image = 'none'
         } else {
             image = req.file.path
         }
-    const medic = new Medic ({
+    const patient = new Patient ({
             _id: new mongoose.Types.ObjectId(),
             username: req.body.username,
             password: req.body.password,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
+            ci: req.body.ci,
+            age: req.body.age,
             email: req.body.email,
             role: req.body.role,
+            genero: req.body.genero,
+            ethnic: req.body.ethnic,
+            maritalStatus: req.body.maritalStatus,
+            ocupation: req.body.ocupation,
+            placeBirth: req.body.placeBirth,
             address: req.body.address,
             phone: req.body.phone,
-            specialty: req.body.specialty,
-            genero: req.body.genero,
+            medic: req.body.medic,
             imagePath: image
         });
-        await medic.save()
-        // const token = jwt.sign({_id: medic._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
-        // medic.token = token
+        await patient.save()
+        // const token = jwt.sign({_id: patient._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
+        // patient.token = token
         res.status(201).send({
-            message: "Médico registrado satisfactoriamente!",
+            message: "Paciente registrado satisfactoriamente!",
         })
     } catch (error) {
         res.status(400).send({message: `${error}`})
     }
 }
 
-//  login de un medico registrado
+//  login de un paciente registrado
 async function signIn(req, res) {
     try {
         const { username, password } = req.body
-        const user = await Medic.findOne({username: username})        
+        const user = await Patient.findOne({username: username})        
         if (!user) {
             return res.status(401).send({message: 'Nombre incorrecto'})
         }
@@ -61,9 +68,9 @@ async function signIn(req, res) {
     }
 }
 
-// Buscar por Id a un médico
+// Buscar por Id a un paciente
 function getById(req, res, next ) {
-    Medic.findById( req.params.id, (err, data) => {
+    Patient.findById( req.params.id, (err, data) => {
         if(err) {
             next(err)
         } else {
@@ -72,25 +79,50 @@ function getById(req, res, next ) {
     })
 }
 
-// Encontrar a todos los médicos
+// Encontrar a todos los pacientes
 function getAll (req, res, next) {
-    Medic.find((error, data) => {
-        if (error) {
-            next(error)
-        } else {
-            res.json(data)
-        }
+    // Patient.find((error, data) => {
+    //     if (error) {
+    //         next(error)
+    //     } else {
+    //         res.json(data)
+    //     }
+    // })
+    Patient.find()
+    .populate('medic')
+    .exec()
+    .then( patients => {
+        res.json(patients)
+    })
+    .catch( err => {
+        next( new Error(err))
     })
 }
 
-// Actualizar médico
-async function updateMedic( req, res, next ) {
+// Encontrar a todos los pacientes por id de médico
+function getPatient (req, res, next) {
+    const _medic = req.params.id
+    
+    Patient.find({medic: _medic})
+    .populate('medic')
+    .exec()
+    .then( patients => {
+        res.json(patients)
+    })
+    .catch( err => {
+        next(new Error(err))
+    })
+    
+}
+
+// Actualizar paciente
+async function updatePatient( req, res, next ) {
     if( !req.file ){
         image = req.body.imagePath
     } else {
         image = req.file.path
     }
-    await Medic.findByIdAndUpdate(req.params.id, {
+    await Patient.findByIdAndUpdate(req.params.id, {
         $set: req.body, imagePath: image
     }, (err, data) => {
         if(err) {
@@ -101,25 +133,26 @@ async function updateMedic( req, res, next ) {
     })
 }
 
-// Eliminar médico
-function deleteMedic( req, res, next ) {
-    Medic.findByIdAndDelete( req.params.id, (err, data) => {
+// Eliminar paciente
+function deletePatient( req, res, next ) {
+    Patient.findByIdAndDelete( req.params.id, (err, data) => {
         if( data ) {
             fs.unlink(path.resolve(data.imagePath))
         }
         if(err) {
             next(err)
         } else {
-            res.json({ message: 'Médico eliminado', data })
+            res.json({ message: 'Paciente eliminado', data })
         }
     })
 }
 
 module.exports = {
-    createMedic,
+    createPatient,
     signIn,
     getById,
     getAll,
-    updateMedic,
-    deleteMedic
+    updatePatient,
+    deletePatient,
+    getPatient
 }
