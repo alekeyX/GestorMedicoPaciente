@@ -31,12 +31,12 @@ async function signIn(req, res){
         const { username, password } = req.body
         const user = await User.findOne({username: username})        
         if (!user) {
-            return res.status(401).send({message: 'Nombre incorrecto'})
+            return res.status(401).send({error: 'Nombre incorrecto'})
         }
         
         if(user) {
             const isPasswordMatch = await bcrypt.compare(password, user.password)
-            if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
+            if (!isPasswordMatch) return res.status(401).send({error: 'Contraseña incorrecta'})
             const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
             user.token = token
             return res.status(200).json(user);
