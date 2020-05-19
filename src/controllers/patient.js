@@ -54,17 +54,17 @@ async function signIn(req, res) {
         const { username, password } = req.body
         const user = await Patient.findOne({username: username})        
         if (!user) {
-            return res.status(401).send({error: 'Nombre incorrecto'})
+            return res.status(401).send({message: 'Nombre incorrecto'})
         }
         const isPasswordMatch = await bcrypt.compare(password, user.password)
-        if (!isPasswordMatch) return res.status(401).send({error: 'Contraseña incorrecta'})
+        if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
 
         const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
         user.token = token
         return res.status(200).json(user);
 
     } catch (error) {
-        res.status(400).send({error: `${error}`})
+        res.status(400).send({message: `${error}`})
     }
 }
 
@@ -117,13 +117,14 @@ function getPatient (req, res, next) {
 
 // Actualizar paciente
 async function updatePatient( req, res, next ) {
+    const password = await bcrypt.hash(req.body.password, 8)
     if( !req.file ){
         image = req.body.imagePath
     } else {
         image = req.file.path
     }
     await Patient.findByIdAndUpdate(req.params.id, {
-        $set: req.body, imagePath: image
+        $set: req.body, password: password, imagePath: image
     }, (err, data) => {
         if(err) {
             next(err)
