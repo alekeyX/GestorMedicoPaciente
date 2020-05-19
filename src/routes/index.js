@@ -40,19 +40,19 @@ var upload = multer({
 // Rutas de médicos
 router.post('/medic', upload.single('imagePath'), medicCtrl.createMedic )
 router.post('/medic/signin', medicCtrl.signIn )
-router.put('/medic/:id', upload.single('imagePath'), medicCtrl.updateMedic )
+router.put('/medic/:id', auth, upload.single('imagePath'), medicCtrl.updateMedic )
 router.get('/medic', auth, medicCtrl.getAll )
 router.get('/medic/:id', auth, medicCtrl.getById )
-router.delete('/medic/:id', auth,  medicCtrl.deleteMedic )
+router.delete('/medic/:id', auth, medicCtrl.deleteMedic )
 
 // Rutas de pacientes
 router.post('/patient', upload.single('imagePath'), patientCtrl.createPatient )
 router.post('/patient/signin', patientCtrl.signIn )
-router.get('/patients/:id', patientCtrl.getPatient )
-router.put('/patient/:id', upload.single('imagePath'), patientCtrl.updatePatient )
-router.get('/patient', patientCtrl.getAll )
-router.get('/patient/:id',  patientCtrl.getById )
-router.delete('/patient/:id',   patientCtrl.deletePatient )
+router.get('/patients/:id', auth, patientCtrl.getPatient )
+router.put('/patient/:id', auth, upload.single('imagePath'), patientCtrl.updatePatient )
+router.get('/patient', auth, patientCtrl.getAll )
+router.get('/patient/:id', auth,  patientCtrl.getById )
+router.delete('/patient/:id', auth,   patientCtrl.deletePatient )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
