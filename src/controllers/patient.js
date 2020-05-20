@@ -5,9 +5,8 @@ const jwt = require('jsonwebtoken')
 const path = require('path')
 const fs = require('fs-extra')
 const mongoose = require('mongoose')
-// Modelo médico
+// Modelo paciente
 const Patient = require('../models/Patient')
-const Medic = require('../models/Medic')
 
 // Crear un registro
 async function createPatient(req, res, next) {

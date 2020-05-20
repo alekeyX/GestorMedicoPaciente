@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require('uuid')
 const userCtrl = require('../controllers/user')
 const medicCtrl = require('../controllers/medic')
 const patientCtrl = require('../controllers/patient')
+const historyCtrl = require('../controllers/history')
 const auth = require('../middleware/auth')
 
 // Multer configuracion de subida de archivos
@@ -53,6 +54,14 @@ router.put('/patient/:id', auth, upload.single('imagePath'), patientCtrl.updateP
 router.get('/patient', auth, patientCtrl.getAll )
 router.get('/patient/:id', auth,  patientCtrl.getById )
 router.delete('/patient/:id', auth,   patientCtrl.deletePatient )
+
+// Rutas de historiales
+router.post('/history', historyCtrl.createHistory )
+router.get('/historys/:id', historyCtrl.getHistory )
+router.put('/history/:id', historyCtrl.updateHistory )
+router.get('/history', historyCtrl.getAll )
+router.get('/history/:id', historyCtrl.getById )
+router.delete('/history/:id', historyCtrl.deleteHistory )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
