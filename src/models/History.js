@@ -1,10 +1,7 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const validator = require('validator')
 const uniqueValidator = require('mongoose-unique-validator')
 
 const HistorySchema = mongoose.Schema ({
-    patient:                { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
     motivoConsulta:         { type: String, required: true },
     enfermedadActual:       { type: String, required: true },
     antecedentesPersonales: { type: String },
@@ -67,18 +64,10 @@ const HistorySchema = mongoose.Schema ({
     // Diagnostico
     diagnostico:            { type: String },
     tratamiento:            { type: String },
+    patient_id:             { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' }
 }, {
     timestamps: true
 })
-
-// Antes de almacenar la contraseña en la base de datos la encriptamos con Bcrypt, esto es posible gracias al middleware de mongoose
-// HistorySchema.pre('save', async function (next) {
-//     const history = this
-//     if (history.isModified('password')) {
-//         history.password = await bcrypt.hash(history.password, 8)
-//     }
-//     next()
-// })
 
 // Método para no devolver la contraseña
 HistorySchema.methods.toJSON = function() {
@@ -93,6 +82,6 @@ HistorySchema.plugin(uniqueValidator, {
     message: '{PATH} debe de ser único'
 });
 
-const History = mongoose.model('history', HistorySchema)
+const History = mongoose.model('History', HistorySchema)
 
 module.exports = History

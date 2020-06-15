@@ -1,6 +1,5 @@
-// Modulos requeridos
-const mongoose = require('mongoose')
 // Modelo de historia
+const Patient = require('../models/Patient')
 const History = require('../models/History')
 
 // Crear un registro
@@ -11,13 +10,17 @@ async function createHistory(req, res, next) {
             if (error) {
                 res.send({message: error})
             } else {
-                res.send(history)
+                Patient.findByIdAndUpdate(req.body.patient, {
+                    $addToSet: {history: history._id}
+                },  { new: true }, (err) => {
+                    if (err) {
+                        next(err)
+                    } else {
+                        res.status(201).send({ message: 'Historia registrada satisfactoriamente!' })
+                    }
+                })
             }
         })
-        // await history.save()
-        // res.status(201).send({
-        //     message: "Paciente registrado satisfactoriamente!",
-        // })
     } catch (error) {
         res.status(400).send({message: error})
     }
@@ -36,14 +39,8 @@ function getById(req, res, next ) {
 
 // Encontrar a todos los historiales
 function getAll (req, res, next) {
-    // Patient.find((error, data) => {
-    //     if (error) {
-    //         next(error)
-    //     } else {
-    //         res.json(data)
-    //     }
-    // })
     History.find()
+    .populate('patient_id')
     .then( historys => {
         res.json(historys)
     })
@@ -55,9 +52,8 @@ function getAll (req, res, next) {
 // Encontrar todos los historiales por id de paciente
 function getHistory (req, res, next) {
     const _patient = req.params.id
-    
-    Patient.find({patient: _patient})
-    .populate('patient')
+    History.find({patient_id: _patient})
+    .populate('patient_id')
     .exec()
     .then( historys => {
         res.json(historys)

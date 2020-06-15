@@ -13,19 +13,19 @@ const PatientSchema = mongoose.Schema ({
     role:        { type: String, required: true },
     email:       {  type: String, required: true, unique: true, lowercase: true, validate: value => {
                     if (!validator.isEmail(value)) {
-                        throw new Error({error: 'Direccion de correo invalida'})
+                        throw new Error({message: 'Direccion de correo invalida'})
                     }
                     }},
     genero:      { type: String },
     ethnicity:   { type: String },
-    maritalStatus:      { type: String },
+    maritalStatus:{ type: String },
     ocupation:   { type: String },
     placeBirth:  { type: String },
     address:     { type: String },
     phone:       { type: Number },
-    medic:       { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
     imagePath:   { type: String },
-    token:       { type: String }
+    token:       { type: String },
+    medic_id:    { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
 }, {
     timestamps: true
 })

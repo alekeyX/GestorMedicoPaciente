@@ -85,14 +85,15 @@ function getAll (req, res, next) {
 
 // Actualizar médico
 async function updateMedic( req, res, next ) {
-    const password = await bcrypt.hash(req.body.password, 8)
+    // const password = await bcrypt.hash(req.body.password, 8)
     if( !req.file ){
         image = req.body.imagePath
     } else {
         image = req.file.path
     }
     await Medic.findOneAndUpdate({_id: req.params.id}, {
-        $set: req.body, password: password, imagePath: image
+        // $set: req.body, password: password, imagePath: image
+        $set: req.body, imagePath: image
     }, {new: true}, (err, data) => {
         if(err) {
             next(err)

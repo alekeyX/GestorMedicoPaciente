@@ -9,13 +9,15 @@ const mongoose = require('mongoose')
 const Patient = require('../models/Patient')
 
 // Crear un registro
-async function createPatient(req, res, next) {
+async function createPatient(req, res) {
     try {
         if( !req.file ){
             image = 'none'
         } else {
             image = req.file.path
         }
+        console.log(req.body);
+        
     const patient = new Patient ({
             _id: new mongoose.Types.ObjectId(),
             username: req.body.username,
@@ -33,12 +35,12 @@ async function createPatient(req, res, next) {
             placeBirth: req.body.placeBirth,
             address: req.body.address,
             phone: req.body.phone,
-            medic: req.body.medic,
-            imagePath: image
-        });        
+            imagePath: image,
+            medic_id: req.body.medic_id
+        });
+        console.log(patient);
+        
         await patient.save()
-        // const token = jwt.sign({_id: patient._id}, db.SECRET_TOKEN, { expiresIn: '1h' })
-        // patient.token = token
         res.status(201).send({
             message: "Paciente registrado satisfactoriamente!",
         })
@@ -80,15 +82,8 @@ function getById(req, res, next ) {
 
 // Encontrar a todos los pacientes
 function getAll (req, res, next) {
-    // Patient.find((error, data) => {
-    //     if (error) {
-    //         next(error)
-    //     } else {
-    //         res.json(data)
-    //     }
-    // })
     Patient.find()
-    .populate('medic')
+    .populate('medic_id')
     .exec()
     .then( patients => {
         res.json(patients)
@@ -102,8 +97,8 @@ function getAll (req, res, next) {
 function getPatient (req, res, next) {
     const _medic = req.params.id
     
-    Patient.find({medic: _medic})
-    .populate('medic')
+    Patient.find({medic_id: _medic})
+    .populate('medic_id')
     .exec()
     .then( patients => {
         res.json(patients)

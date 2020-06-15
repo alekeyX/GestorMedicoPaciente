@@ -39,7 +39,7 @@ var upload = multer({
 // Especificamos nuestras rutas teniendo en cuenta los metodos creados en nuestro controlador
 
 // Rutas de médicos
-router.post('/medic', upload.single('imagePath'), medicCtrl.createMedic )
+router.post('/medic', upload.single('imagePath'), auth, medicCtrl.createMedic )
 router.post('/medic/signin', medicCtrl.signIn )
 router.put('/medic/:id', auth, upload.single('imagePath'), medicCtrl.updateMedic )
 router.get('/medic', auth, medicCtrl.getAll )
@@ -47,21 +47,21 @@ router.get('/medic/:id', auth, medicCtrl.getById )
 router.delete('/medic/:id', auth, medicCtrl.deleteMedic )
 
 // Rutas de pacientes
-router.post('/patient', upload.single('imagePath'), patientCtrl.createPatient )
+router.post('/patient', upload.single('imagePath'), auth, patientCtrl.createPatient )
 router.post('/patient/signin', patientCtrl.signIn )
 router.get('/patients/:id', auth, patientCtrl.getPatient )
 router.put('/patient/:id', auth, upload.single('imagePath'), patientCtrl.updatePatient )
 router.get('/patient', auth, patientCtrl.getAll )
-router.get('/patient/:id', auth,  patientCtrl.getById )
-router.delete('/patient/:id', auth,   patientCtrl.deletePatient )
+router.get('/patient/:id', auth, patientCtrl.getById )
+router.delete('/patient/:id', auth, patientCtrl.deletePatient )
 
 // Rutas de historiales
-router.post('/history', historyCtrl.createHistory )
-router.get('/historys/:id', historyCtrl.getHistory )
-router.put('/history/:id', historyCtrl.updateHistory )
-router.get('/history', historyCtrl.getAll )
-router.get('/history/:id', historyCtrl.getById )
-router.delete('/history/:id', historyCtrl.deleteHistory )
+router.post('/history',  auth, historyCtrl.createHistory )
+router.get('/histories/:id',  auth, historyCtrl.getHistory )
+router.put('/history/:id', auth,  historyCtrl.updateHistory )
+router.get('/history', auth, historyCtrl.getAll )
+router.get('/history/:id', auth,  historyCtrl.getById )
+router.delete('/history/:id',  auth, historyCtrl.deleteHistory )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
