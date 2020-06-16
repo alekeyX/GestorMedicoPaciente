@@ -1,6 +1,7 @@
 // Modelo de historia
 const Patient = require('../models/Patient')
 const History = require('../models/History')
+const sortBy = require('sort-by')
 
 // Crear un registro
 async function createHistory(req, res, next) {
@@ -42,6 +43,7 @@ function getAll (req, res, next) {
     History.find()
     .populate('patient_id')
     .then( historys => {
+        historys.sort(sortBy('-createdAt'))
         res.json(historys)
     })
     .catch( err => {

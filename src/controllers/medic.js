@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const path = require('path')
 const fs = require('fs-extra')
 const mongoose = require('mongoose')
+const sortBy = require('sort-by')
 // Modelo médico
 const Medic = require('../models/Medic')
 
@@ -78,6 +79,7 @@ function getAll (req, res, next) {
         if (error) {
             next(error)
         } else {
+            data.sort(sortBy('firstName', 'lastName'))
             res.json(data)
         }
     })
