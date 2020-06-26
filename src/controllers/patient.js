@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const path = require('path')
 const fs = require('fs-extra')
 const mongoose = require('mongoose')
+const sortBy = require('sort-by')
 // Modelo paciente
 const Patient = require('../models/Patient')
 
@@ -86,6 +87,7 @@ function getAll (req, res, next) {
     .populate('medic_id')
     .exec()
     .then( patients => {
+        patients.sort(sortBy('username', 'firstName'))
         res.json(patients)
     })
     .catch( err => {

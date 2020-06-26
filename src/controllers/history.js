@@ -43,7 +43,7 @@ function getAll (req, res, next) {
     History.find()
     .populate('patient_id')
     .then( historys => {
-        historys.sort(sortBy('-createdAt'))
+        historys.sort(sortBy('createdAt'))
         res.json(historys)
     })
     .catch( err => {
