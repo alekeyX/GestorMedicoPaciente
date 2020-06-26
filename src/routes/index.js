@@ -9,6 +9,7 @@ const userCtrl = require('../controllers/user')
 const medicCtrl = require('../controllers/medic')
 const patientCtrl = require('../controllers/patient')
 const historyCtrl = require('../controllers/history')
+const reservationCtrl = require('../controllers/reservation')
 const auth = require('../middleware/auth')
 
 // Multer configuracion de subida de archivos
@@ -62,6 +63,14 @@ router.put('/history/:id', auth,  historyCtrl.updateHistory )
 router.get('/history', auth, historyCtrl.getAll )
 router.get('/history/:id', auth,  historyCtrl.getById )
 router.delete('/history/:id',  auth, historyCtrl.deleteHistory )
+
+// Rutas de Reservas
+router.post('/reservation',  reservationCtrl.createReservation )
+router.get('/reservations/:id',  reservationCtrl.getReservation )
+router.put('/reservation/:id',  reservationCtrl.updateReservation )
+router.get('/reservation', reservationCtrl.getAll )
+router.get('/reservation/:id',  reservationCtrl.getById )
+router.delete('/reservation/:id',  reservationCtrl.deleteReservation )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
