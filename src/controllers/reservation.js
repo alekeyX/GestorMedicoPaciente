@@ -62,8 +62,8 @@ async function createReservation(req, res, next) {
                                     medic_id: req.body.medic_id
                                 })
                                 reserva.save()
-                                res.status(201).send({message: 'Fechas habilitadas exitosamente!'})
                             });
+                            res.send({message: 'Fechas habilitadas exitosamente!'})
                         }
                         from.add(1, 'days')
                     }
@@ -114,6 +114,18 @@ function getReservation (req, res, next) {
     })
 }
 
+function getPatientReservation (req, res, next) {
+    const _patient = req.params.id
+    Reservation.find({patient_id: _patient})
+    .exec()
+    .then( reservations => {
+        res.json(reservations)
+    })
+    .catch( err => {
+        next(new Error (err))
+    })
+}
+
 // Actualizar reserva
 async function updateReservation( req, res, next ) {
     await Reservation.findByIdAndUpdate(req.params.id, {
@@ -144,5 +156,6 @@ module.exports = {
     getAll,
     updateReservation,
     deleteReservation,
-    getReservation
+    getReservation,
+    getPatientReservation
 }
