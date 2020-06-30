@@ -65,13 +65,13 @@ router.get('/history/:id', auth,  historyCtrl.getById )
 router.delete('/history/:id',  auth, historyCtrl.deleteHistory )
 
 // Rutas de Reservas
-router.post('/reservation',  reservationCtrl.createReservation )
-router.get('/reservations/:id',  reservationCtrl.getReservation )
-router.get('/reservations/patient/:id',  reservationCtrl.getPatientReservation )
-router.put('/reservation/:id',  reservationCtrl.updateReservation )
-router.get('/reservation', reservationCtrl.getAll )
-router.get('/reservation/:id',  reservationCtrl.getById )
-router.delete('/reservation/:id',  reservationCtrl.deleteReservation )
+router.post('/reservation', auth,  reservationCtrl.createReservation )
+router.get('/reservations/:id', auth,  reservationCtrl.getReservation )
+router.get('/reservations/patient/:id', auth,  reservationCtrl.getPatientReservation )
+router.put('/reservation/:id', auth,  reservationCtrl.updateReservation )
+router.get('/reservation', auth, reservationCtrl.getAll )
+router.get('/reservation/:id', auth,  reservationCtrl.getById )
+router.delete('/reservation/:id', auth,  reservationCtrl.deleteReservation )
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
