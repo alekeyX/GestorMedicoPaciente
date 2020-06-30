@@ -67,6 +67,7 @@ router.delete('/history/:id',  auth, historyCtrl.deleteHistory )
 // Rutas de Reservas
 router.post('/reservation',  reservationCtrl.createReservation )
 router.get('/reservations/:id',  reservationCtrl.getReservation )
+router.get('/reservations/patient/:id',  reservationCtrl.getPatientReservation )
 router.put('/reservation/:id',  reservationCtrl.updateReservation )
 router.get('/reservation', reservationCtrl.getAll )
 router.get('/reservation/:id',  reservationCtrl.getById )
