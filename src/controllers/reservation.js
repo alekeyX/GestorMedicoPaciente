@@ -44,7 +44,6 @@ async function createReservation(req, res, next) {
             
             // Verificar si la fecha para reservas es aun vigente
             if(moment(date).isBefore(to)) {
-                console.log('esta a tiempo');
                 // Ir sumando un dia desde la fecha inicial hasta la fecha final
                 while (!from.isAfter(to)) {
                     // Comparar si el dia es un dia elegido por el medico para tener reservas
@@ -69,7 +68,6 @@ async function createReservation(req, res, next) {
                         from.add(1, 'days')
                     }
                 } else {
-                    console.log('se acabo el tiempo');
                     res.status(201).send({message: 'Ya venció la fecha elegida'})
                 }
         });

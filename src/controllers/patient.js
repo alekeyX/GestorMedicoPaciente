@@ -17,8 +17,6 @@ async function createPatient(req, res) {
         } else {
             image = req.file.path
         }
-        console.log(req.body);
-        
     const patient = new Patient ({
             _id: new mongoose.Types.ObjectId(),
             username: req.body.username,
@@ -39,8 +37,6 @@ async function createPatient(req, res) {
             imagePath: image,
             medic_id: req.body.medic_id
         });
-        console.log(patient);
-        
         await patient.save()
         res.status(201).send({
             message: "Paciente registrado satisfactoriamente!",
