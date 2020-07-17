@@ -1,2 +1,5 @@
 # folders
 /src/uploads
+
+# dependencies
+node_modules
