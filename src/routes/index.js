@@ -10,7 +10,7 @@ const medicCtrl = require('../controllers/medic')
 const patientCtrl = require('../controllers/patient')
 const historyCtrl = require('../controllers/history')
 const reservationCtrl = require('../controllers/reservation')
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth');
 
 // Multer configuracion de subida de archivos
 const DIR = './src/uploads'
@@ -72,6 +72,19 @@ router.put('/reservation/:id', auth,  reservationCtrl.updateReservation )
 router.get('/reservation', auth, reservationCtrl.getAll )
 router.get('/reservation/:id', auth,  reservationCtrl.getById )
 router.delete('/reservation/:id', auth,  reservationCtrl.deleteReservation )
+
+// Rutas de chat
+router.get('/', (req, res) => {
+  io.on('connection', (socket) => {
+    console.log('user connected');
+
+    socket.on('new-message', (message) => {
+      console.log(message);
+      io.emit('new-message', message);
+    });
+  });
+}) 
+
 
 // Rutas de user
 router.post('/signup', userCtrl.signUp )
