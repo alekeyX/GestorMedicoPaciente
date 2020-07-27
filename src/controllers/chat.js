@@ -1,4 +1,5 @@
 let http = require('http');
+const mongoose = require('mongoose')
 const Message = require('../models/Message');
 
 function socketConnection(app){
@@ -14,15 +15,42 @@ function socketConnection(app){
         console.log('user connected');
         
         // recibir el id de un usuario para recuperar los mensajes de la base de datos
-        socket.on('open-chat', (user_id) => {
-            console.log(user_id);
-            io.emit('open-chat', user_id);
+        socket.on('open-chat', (patient_medic_id, medic_id) => {
+            Message.find({patient_id: patient_medic_id, 
+                            medic_id: medic_id})
+            .exec()
+            .then( messages  => {
+                io.emit('open-chat', messages);
+            })
+            .catch( error => {
+                console.log(error);
+            })
+            // si un paciente escribe a un medico
+            // else { 
+            //     Message.find({patient_id: to_user_id, medic_id: from_user_id})
+            //     .exec()
+            //     .then( messages  => {
+            //         // res.json(messages)
+            //         console.log(messages);
+            //     })
+            //     .catch( error => {
+            //         console.log(error);
+            //     })
+            // }
         });
 
         socket.on('new-message', (message) => {
-            console.log(message);
-
-            io.emit('new-message', message);
+            // Guardar mensaje en la base de datos
+            crearMsg(message)
+            Message.find({patient_id: message.patient_id, 
+                            medic_id: message.medic_id})
+            .exec()
+            .then( messages  => {
+                io.emit('open-chat', messages);
+            })
+            .catch( error => {
+                console.log(error);
+            })
         });
 
         socket.on("disconnect", function() {
@@ -32,22 +60,30 @@ function socketConnection(app){
 }
 
 // crear mensaje
-async function crearMsg (req, res, next) {
+async function crearMsg (req) {
     try {
-        const msg = req.body;
+        const msg = new Message ({
+            _id: new mongoose.Types.ObjectId(),
+            medic_id: req.medic_id,
+            patient_id: req.patient_id,
+            to: req.to,
+            from: req.from,
+            msg: req.msg
+        });
         await msg.save()
-        res.status(201).send({
-            message: "Mensaje registrado"
-        })
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        console.log(error);
     }
 }
 
-function getAll (res, res, next) {
+// TODO crear 2 bases de datos
+// uno para mensajes entre paciente y medico
+// y otro para mensajes entre medicos
+
+function getAll (req, res, next) {
     const _user = req.params.id
-    Message.find({from: _user})
-    .populate('from')
+    Message.find({patient_id: _user})
+    // .populate('medic_id')
     .exec()
     .then( messages  => {
         res.json(messages)
@@ -57,6 +93,20 @@ function getAll (res, res, next) {
     })
 }
 
+// function getMsgByPatient (req, res, next) {
+//     const _user = req.params.id
+//     Message.find({patient_id: _user})
+//     .populate('patient_id')
+//     .exec()
+//     .then( messages  => {
+//         res.json(messages)
+//     })
+//     .catch( error => {
+//         next(new Error(error))
+//     })
+// }
+
 module.exports = {
-    socketConnection
+    socketConnection,
+    getAll
 }

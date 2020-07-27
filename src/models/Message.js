@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
 
 const MessageSchema = mongoose.Schema ({
-    to:         { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
-    from:       { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
-    msg:        { type: String },
-    read:       { type: Boolean }
+    patient_id:     { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
+    medic_id:       { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
+    msg:            { type: String },
+    to:             { type: String },
+    from:           { type: String },
+    // read:       { type: Boolean }
 }, {
     timestamps: true
 })
