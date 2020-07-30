@@ -14,43 +14,25 @@ function socketConnection(app){
     io.on('connection', (socket) => {
         console.log('user connected');
         
-        // recibir el id de un usuario para recuperar los mensajes de la base de datos
-        socket.on('open-chat', (patient_medic_id, medic_id) => {
-            Message.find({patient_id: patient_medic_id, 
-                            medic_id: medic_id})
-            .exec()
-            .then( messages  => {
-                io.emit('open-chat', messages);
-            })
-            .catch( error => {
-                console.log(error);
-            })
-            // si un paciente escribe a un medico
-            // else { 
-            //     Message.find({patient_id: to_user_id, medic_id: from_user_id})
-            //     .exec()
-            //     .then( messages  => {
-            //         // res.json(messages)
-            //         console.log(messages);
-            //     })
-            //     .catch( error => {
-            //         console.log(error);
-            //     })
-            // }
+        // recibir el id de un usuario a quien escribiremos
+        socket.on('open-chat', (to_user_id) => {
+            io.emit('open-chat', to_user_id);
         });
 
-        socket.on('new-message', (message) => {
-            // Guardar mensaje en la base de datos
+        // devolver mensajes de la bd
+        socket.on('get-message', async data => {
+            let messages = await Message.find({patient_id: data.patient_id, 
+                medic_id: data.medic_id})
+            io.emit('new-message', messages)
+        })
+
+        // Guardar mensaje en la base de datos
+        socket.on('new-message', async (message) => {
             crearMsg(message)
-            Message.find({patient_id: message.patient_id, 
-                            medic_id: message.medic_id})
-            .exec()
-            .then( messages  => {
-                io.emit('open-chat', messages);
-            })
-            .catch( error => {
-                console.log(error);
-            })
+            // devolver mensajes de la bd
+            let messages = await Message.find({patient_id: message.patient_id, 
+                medic_id: message.medic_id})
+            io.emit('new-message', messages)
         });
 
         socket.on("disconnect", function() {
@@ -76,37 +58,6 @@ async function crearMsg (req) {
     }
 }
 
-// TODO crear 2 bases de datos
-// uno para mensajes entre paciente y medico
-// y otro para mensajes entre medicos
-
-function getAll (req, res, next) {
-    const _user = req.params.id
-    Message.find({patient_id: _user})
-    // .populate('medic_id')
-    .exec()
-    .then( messages  => {
-        res.json(messages)
-    })
-    .catch( error => {
-        next(new Error(error))
-    })
-}
-
-// function getMsgByPatient (req, res, next) {
-//     const _user = req.params.id
-//     Message.find({patient_id: _user})
-//     .populate('patient_id')
-//     .exec()
-//     .then( messages  => {
-//         res.json(messages)
-//     })
-//     .catch( error => {
-//         next(new Error(error))
-//     })
-// }
-
 module.exports = {
     socketConnection,
-    getAll
 }
