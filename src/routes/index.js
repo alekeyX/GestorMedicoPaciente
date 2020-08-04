@@ -82,6 +82,10 @@ router.get('/users/:id', auth, userCtrl.getById)
 router.put('users/:id', auth, userCtrl.updateUser)
 router.delete('users/:id', auth, userCtrl.deleteUser)
 
+//  Rutas de chat
+router.get('/chat/:to/:from', chatCtrl.getAll)
+
+
 // router.get('/', (req, res) => res.send('hello world'))
 // router.get('/tasks',auth,  (req, res) => {
 //     res.json([

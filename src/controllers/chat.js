@@ -2,6 +2,7 @@ let http = require('http');
 const mongoose = require('mongoose')
 const Message = require('../models/Message');
 
+
 function socketConnection(app){
     const server = http.Server(app)
     const socketIO = require('socket.io')
@@ -13,31 +14,31 @@ function socketConnection(app){
     
     io.on('connection', (socket) => {
         console.log('user connected');
-        
-        // recibir el id de un usuario a quien escribiremos
-        socket.on('open-chat', (to_user_id) => {
-            io.emit('open-chat', to_user_id);
-        });
 
-        // devolver mensajes de la bd
-        socket.on('get-message', async data => {
-            let messages = await Message.find({patient_id: data.patient_id, 
-                medic_id: data.medic_id})
-            io.emit('new-message', messages)
+        // Unirse a un room
+        socket.on('joinRoom', (room) => {
+            socket.join(room);
+        })
+
+        // Salir de un room
+        socket.on('leaveRoom', (room) => {
+            socket.leave(room);
         })
 
         // Guardar mensaje en la base de datos
-        socket.on('new-message', async (message) => {
+        socket.on('new-message', async (message, room) => {
             crearMsg(message)
             // devolver mensajes de la bd
             let messages = await Message.find({patient_id: message.patient_id, 
                 medic_id: message.medic_id})
-            io.emit('new-message', messages)
-        });
+            //     .limit(20)
+            //     .sort({$natural:-1})
+            io.to(room).emit('new-message', messages)
+        })
 
-        socket.on("disconnect", function() {
+        socket.on('disconnect', function() {
             console.log("user disconnected");
-        });
+        })
     });
 }
 
@@ -48,7 +49,6 @@ async function crearMsg (req) {
             _id: new mongoose.Types.ObjectId(),
             medic_id: req.medic_id,
             patient_id: req.patient_id,
-            to: req.to,
             from: req.from,
             msg: req.msg
         });
@@ -58,6 +58,21 @@ async function crearMsg (req) {
     }
 }
 
+// Devolver mensajes de la db
+function getAll (req, res, next) {
+    const _to = req.params.to
+    const _from = req.params.from
+    Message.find({patient_id: _to, 
+        medic_id: _from})
+    .then( messages => {
+        res.json(messages)
+    })
+    .catch( err => {
+        next( new Error(err))
+    })
+}
+
 module.exports = {
     socketConnection,
+    getAll
 }
