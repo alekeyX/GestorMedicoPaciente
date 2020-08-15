@@ -6,7 +6,7 @@ const sortBy = require('sort-by')
 // Crear un registro
 async function createHistory(req, res, next) {
     try {
-    const history = req.body;  
+    const history = req.body;
         await History.create(history, (error, history) =>{
             if (error) {
                 res.send({message: error})
@@ -17,7 +17,7 @@ async function createHistory(req, res, next) {
                     if (err) {
                         next(err)
                     } else {
-                        res.status(201).send({ message: 'Historia registrada satisfactoriamente!' })
+                        res.status(201).send({ history, message: 'Historia registrada satisfactoriamente!' })
                     }
                 })
             }

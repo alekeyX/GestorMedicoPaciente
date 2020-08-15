@@ -3,7 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator')
 
 const HistorySchema = mongoose.Schema ({
     motivoConsulta:         { type: String, required: true },
-    enfermedadActual:       { type: String, required: true },
+    enfermedadActual:       { type: String },
     antecedentesPersonales: { type: String },
     antecedentesFamiliares: { type: String },
     age:                    { type: Number },
@@ -64,7 +64,10 @@ const HistorySchema = mongoose.Schema ({
     // Diagnostico
     diagnostico:            { type: String },
     tratamiento:            { type: String },
-    patient_id:             { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' }
+    patient_id:             { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
+    medic:                  { type: String },
+    specialty:              { type: String },
+    hour:                   { type: String }
 }, {
     timestamps: true
 })
