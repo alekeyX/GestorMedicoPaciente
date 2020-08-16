@@ -16,7 +16,7 @@ const MedicSchema = mongoose.Schema ({
                     }},
     genero:      { type: String },
     address:     { type: String },
-    phone:       { type: Number },
+    phone:       { type: String },
     specialty:   { type: String },
     imagePath:   { type: String },
     token:       {

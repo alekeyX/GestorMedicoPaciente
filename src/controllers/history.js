@@ -17,7 +17,7 @@ async function createHistory(req, res, next) {
                     if (err) {
                         next(err)
                     } else {
-                        res.status(201).send({ history, message: 'Historia registrada satisfactoriamente!' })
+                        res.status(201).send({ message: 'Historia registrada satisfactoriamente!' })
                     }
                 })
             }
@@ -35,7 +35,7 @@ function getById(req, res, next ) {
         } else {
             res.json(data)
         }
-    })
+    }).populate('patient_id')
 }
 
 // Encontrar a todos los historiales

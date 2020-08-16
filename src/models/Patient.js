@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const validator = require('validator')
 const uniqueValidator = require('mongoose-unique-validator')
 
 const PatientSchema = mongoose.Schema ({
@@ -9,23 +8,18 @@ const PatientSchema = mongoose.Schema ({
     firstName:   { type: String, required: true },
     lastName:    { type: String, required: true },
     ci:          { type: String, required: true },
-    age:         { type: Number, required: true },
+    age:         { type: String },
     role:        { type: String, required: true },
-    email:       {  type: String, required: true, unique: true, lowercase: true, validate: value => {
-                    if (!validator.isEmail(value)) {
-                        throw new Error({message: 'Direccion de correo invalida'})
-                    }
-                    }},
+    email:       { type: String},
     genero:      { type: String },
     ethnicity:   { type: String },
     maritalStatus:{ type: String },
     ocupation:   { type: String },
     placeBirth:  { type: String },
     address:     { type: String },
-    phone:       { type: Number },
+    phone:       { type: String },
     imagePath:   { type: String },
     token:       { type: String },
-    medic_id:    { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
 }, {
     timestamps: true
 })

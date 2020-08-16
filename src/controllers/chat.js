@@ -50,7 +50,8 @@ async function crearMsg (req) {
             medic_id: req.medic_id,
             patient_id: req.patient_id,
             from: req.from,
-            msg: req.msg
+            msg: req.msg,
+            createdAt: Date()
         });
         await msg.save()
     } catch (error) {

@@ -51,7 +51,6 @@ router.delete('/medic/:id', auth, medicCtrl.deleteMedic )
 // Rutas de pacientes
 router.post('/patient', upload.single('imagePath'), auth, patientCtrl.createPatient )
 router.post('/patient/signin', patientCtrl.signIn )
-router.get('/patients/:id', auth, patientCtrl.getPatient )
 router.put('/patient/:id', auth, upload.single('imagePath'), patientCtrl.updatePatient )
 router.get('/patient', auth, patientCtrl.getAll )
 router.get('/patient/:id', auth, patientCtrl.getById )
