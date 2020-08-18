@@ -26,16 +26,16 @@ const storage = multer.diskStorage({
 
 // Multer Mime Type Validation
 var upload = multer({
-  storage: storage
-  // limits: { fileSize: 100000 },
-  // fileFilter: (req, file, cb) => {
-  //   if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
-  //     cb(null, true);
-  //   } else {
-  //     cb(null, false);
-  //     return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
-  //   }
-  // }
+  storage: storage,
+  limits: { fileSize: 100000 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    }
+  }
 });
 
 // Especificamos nuestras rutas teniendo en cuenta los metodos creados en nuestro controlador
@@ -83,30 +83,5 @@ router.delete('users/:id', auth, userCtrl.deleteUser)
 
 //  Rutas de chat
 router.get('/chat/:to/:from', chatCtrl.getAll)
-
-
-// router.get('/', (req, res) => res.send('hello world'))
-// router.get('/tasks',auth,  (req, res) => {
-//     res.json([
-//         {
-//             _id: 1,
-//             name: 'Task one',
-//             description: 'lorem ipsum',
-//             date: "2020-04-28T20:39:05.2111Z"
-//         },
-//         {
-//             _id: 2,
-//             name: 'Task two',
-//             description: 'lorem ipsum',
-//             date: "2020-04-28T20:39:05.2111Z"
-//         },
-//         {
-//             _id: 3,
-//             name: 'Task three',
-//             description: 'lorem ipsum',
-//             date: "2020-04-28T20:39:05.2111Z"
-//         },
-//     ])
-// })
 
 module.exports = router;

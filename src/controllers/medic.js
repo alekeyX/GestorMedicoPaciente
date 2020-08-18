@@ -53,7 +53,7 @@ async function signIn(req, res) {
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
 
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '24h' });
         user.token = token
         return res.status(200).json(user);
 

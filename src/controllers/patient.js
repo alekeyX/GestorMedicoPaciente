@@ -35,7 +35,6 @@ async function createPatient(req, res) {
             address: req.body.address,
             phone: req.body.phone,
             imagePath: image,
-            medic_id: req.body.medic_id
         });
         await patient.save()
         res.status(201).send({
@@ -57,7 +56,7 @@ async function signIn(req, res) {
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
 
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '24h' });
         user.token = token
         return res.status(200).json(user);
 
@@ -80,7 +79,6 @@ function getById(req, res, next ) {
 // Encontrar a todos los pacientes
 function getAll (req, res, next) {
     Patient.find()
-    .populate('medic_id')
     .exec()
     .then( patients => {
         patients.sort(sortBy('username', 'firstName'))
@@ -89,22 +87,6 @@ function getAll (req, res, next) {
     .catch( err => {
         next( new Error(err))
     })
-}
-
-// Encontrar a todos los pacientes por id de médico
-function getPatient (req, res, next) {
-    const _medic = req.params.id
-    
-    Patient.find({medic_id: _medic})
-    .populate('medic_id')
-    .exec()
-    .then( patients => {
-        res.json(patients)
-    })
-    .catch( err => {
-        next(new Error(err))
-    })
-    
 }
 
 // Actualizar paciente
@@ -121,7 +103,7 @@ async function updatePatient( req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({message: 'Datos actualizados exitosamente', data })
+            res.json({message: 'Datos actualizados exitosamente' })
         }
     })
 }
@@ -135,7 +117,7 @@ function deletePatient( req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({ message: 'Paciente eliminado', data })
+            res.json({ message: 'Paciente eliminado' })
         }
     })
 }
@@ -147,5 +129,4 @@ module.exports = {
     getAll,
     updatePatient,
     deletePatient,
-    getPatient
 }
