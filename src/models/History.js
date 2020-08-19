@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
 const HistorySchema = mongoose.Schema ({
-    motivoConsulta:         { type: String, required: true },
+    motivoConsulta:         { type: String },
     enfermedadActual:       { type: String },
     antecedentesPersonales: { type: String },
     antecedentesFamiliares: { type: String },

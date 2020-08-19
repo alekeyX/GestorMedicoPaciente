@@ -5,7 +5,6 @@ const multer = require('multer')
 const path = require('path');
 const { v4: uuidv4 } = require('uuid')
 // Cargamos controladores
-const userCtrl = require('../controllers/user')
 const medicCtrl = require('../controllers/medic')
 const patientCtrl = require('../controllers/patient')
 const historyCtrl = require('../controllers/history')
@@ -72,14 +71,6 @@ router.put('/reservation/:id', auth,  reservationCtrl.updateReservation )
 router.get('/reservation', auth, reservationCtrl.getAll )
 router.get('/reservation/:id', auth,  reservationCtrl.getById )
 router.delete('/reservation/:id', auth,  reservationCtrl.deleteReservation )
-
-// Rutas de user
-router.post('/signup', userCtrl.signUp )
-router.post('/signin', userCtrl.signIn )
-router.get('/users/', userCtrl.getAll)
-router.get('/users/:id', auth, userCtrl.getById)
-router.put('users/:id', auth, userCtrl.updateUser)
-router.delete('users/:id', auth, userCtrl.deleteUser)
 
 //  Rutas de chat
 router.get('/chat/:to/:from', chatCtrl.getAll)
