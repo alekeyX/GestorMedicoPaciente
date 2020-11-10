@@ -8,31 +8,31 @@ async function createReservation(req, res, next) {
         // Convervir los dias del body en valor numerico
         req.body.days.forEach(day => {
             var selectDay
-            if (day === 'Lunes') {
-                selectDay = 1
-            } else {
-                if (day === 'Martes') {
+
+            switch (day) {
+                case 'Lunes':
+                    selectDay = 1
+                    break;
+                case 'Martes':
                     selectDay = 2
-                } else {
-                    if (day === 'Miércoles') {
-                        selectDay = 3
-                    } else {
-                        if (day === 'Jueves') {
-                            selectDay = 4
-                        } else {
-                            if (day === 'Viernes') {
-                                selectDay = 5
-                            } else {
-                                if (day === 'Sabado') {
-                                    selectDay = 6
-                                } else {
-                                    selectDay = 7
-                                }
-                            }
-                        }
-                    }
-                }
+                    break;
+                case 'Miércoles':
+                    selectDay = 3
+                    break;
+                case 'Jueves':
+                    selectDay = 4
+                    break;
+                case 'Viernes':
+                    selectDay = 5
+                    break;
+                case 'Sabado':
+                    selectDay = 6
+                    break;
+                case 'Domingo':
+                    selectDay = 7
+                    break;
             }
+
             // Convertimos las fechas del body en formato de moment
             let date = moment().format('YYYY-MM-DD')
             let start = req.body.dateStart
