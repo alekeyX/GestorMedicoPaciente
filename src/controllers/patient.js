@@ -35,6 +35,7 @@ async function createPatient(req, res) {
             address: req.body.address,
             phone: req.body.phone,
             imagePath: image,
+            medic_id: req.body.medic_id
         });
         await patient.save()
         res.status(201).send({
@@ -89,6 +90,18 @@ function getAll (req, res, next) {
     })
 }
 
+// Encontrar a todos los pacientes por id de médico
+function getPatient (req, res, next) {
+    const _medic = req.params.id
+    Patient.find({medic_id: _medic})
+    .then( patients => {
+        res.json(patients)
+    })
+    .catch( err => {
+        next(new Error(err))
+    })
+}
+
 // Actualizar paciente
 async function updatePatient( req, res, next ) {
     const password = await bcrypt.hash(req.body.password, 8)
@@ -97,15 +110,31 @@ async function updatePatient( req, res, next ) {
     } else {
         image = req.file.path
     }
+    _medic = req.body.medic_id
     await Patient.findByIdAndUpdate(req.params.id, {
-        $set: req.body, password: password, imagePath: image
-    }, (err, data) => {
+        $set: req.body, password: password, imagePath: image,
+        },  
+    (err, data) => {
         if(err) {
             next(err)
         } else {
             res.json({message: 'Datos actualizados exitosamente' })
         }
     })
+}
+
+// Id de medico se adiciona a un paciente
+async function medicAddPatient( req, res, next ) {
+    _medic = req.params.medic_id
+    await Patient.findOneAndUpdate(
+        { _id: req.params.id }, 
+        { $push: { medic_id: _medic }},
+        { upsert: true, new: true },
+    )
+    .then(() => 
+    res.json({message: 'Datos actualizados exitosamente' })
+    )
+    .catch((err) => next(err))
 }
 
 // Eliminar paciente
@@ -129,4 +158,6 @@ module.exports = {
     getAll,
     updatePatient,
     deletePatient,
+    getPatient,
+    medicAddPatient
 }

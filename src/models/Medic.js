@@ -9,7 +9,7 @@ const MedicSchema = mongoose.Schema ({
     firstName:   { type: String, required: true },
     lastName:    { type: String, required: true },
     role:        { type: String, required: true },
-    email:       {  type: String, required: true, unique: true, lowercase: true, validate: value => {
+    email:       { type: String, required: true, unique: true, lowercase: true, validate: value => {
                     if (!validator.isEmail(value)) {
                         throw new Error({error: 'Direccion de correo invalida'})
                     }

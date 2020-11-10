@@ -10,7 +10,7 @@ const PatientSchema = mongoose.Schema ({
     ci:          { type: String, required: true },
     age:         { type: String },
     role:        { type: String, required: true },
-    email:       { type: String},
+    email:       { type: String },
     genero:      { type: String },
     ethnicity:   { type: String },
     maritalStatus:{ type: String },
@@ -19,7 +19,8 @@ const PatientSchema = mongoose.Schema ({
     address:     { type: String },
     phone:       { type: String },
     imagePath:   { type: String },
-    token:       { type: String },
+    medic_id:    [{ type: String }],
+    token:       { type: String }
 }, {
     timestamps: true
 })
