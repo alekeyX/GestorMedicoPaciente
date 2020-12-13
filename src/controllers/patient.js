@@ -6,6 +6,8 @@ const path = require('path')
 const fs = require('fs-extra')
 const mongoose = require('mongoose')
 const sortBy = require('sort-by')
+const validator = require('validator')
+
 // Modelo paciente
 const Patient = require('../models/Patient')
 
@@ -17,7 +19,10 @@ async function createPatient(req, res) {
         } else {
             image = req.file.path
         }
-    const patient = new Patient ({
+        if (!validator.isEmail(req.body.email)) {
+            return res.status(400).send({message: 'Correo invalido'})
+        }
+        const patient = new Patient ({
             _id: new mongoose.Types.ObjectId(),
             username: req.body.username,
             password: req.body.password,
@@ -57,7 +62,7 @@ async function signIn(req, res) {
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
 
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '24h' });
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '12h' });
         user.token = token
         return res.status(200).json(user);
 
@@ -118,7 +123,7 @@ async function updatePatient( req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({message: 'Datos actualizados exitosamente' })
+            res.json({message: 'Datos actualizados exitosamente', data })
         }
     })
 }
@@ -146,7 +151,7 @@ function deletePatient( req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({ message: 'Paciente eliminado' })
+            res.json({ message: 'Paciente eliminado', data })
         }
     })
 }

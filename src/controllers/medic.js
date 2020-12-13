@@ -6,6 +6,8 @@ const path = require('path')
 const fs = require('fs-extra')
 const mongoose = require('mongoose')
 const sortBy = require('sort-by')
+const validator = require('validator')
+
 // Modelo médico
 const Medic = require('../models/Medic')
 
@@ -17,7 +19,10 @@ async function createMedic(req, res, next) {
         } else {
             image = req.file.path
         }
-    const medic = new Medic ({
+        if (!validator.isEmail(req.body.email)) {
+            return res.status(400).send({message: 'Correo invalido'})
+        }
+        const medic = new Medic ({
             _id: new mongoose.Types.ObjectId(),
             username: req.body.username,
             password: req.body.password,
@@ -38,7 +43,7 @@ async function createMedic(req, res, next) {
             message: "Médico registrado satisfactoriamente!",
         })
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        res.status(400).send({message: error.errors})
     }
 }
 
@@ -53,7 +58,7 @@ async function signIn(req, res) {
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) return res.status(401).send({message: 'Contraseña incorrecta'})
 
-        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '24h' });
+        const token = jwt.sign({_id: user._id}, db.SECRET_TOKEN, { expiresIn: '12h' });
         user.token = token
         return res.status(200).json(user);
 
@@ -114,7 +119,7 @@ function deleteMedic( req, res, next ) {
         if(err) {
             next(err)
         } else {
-            res.json({ message: 'Médico eliminado', data })
+            res.json({ message: 'Médico eliminado exitosamente', data })
         }
     })
 }
