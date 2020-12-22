@@ -43,7 +43,11 @@ async function createMedic(req, res, next) {
             message: "Médico registrado satisfactoriamente!",
         })
     } catch (error) {
-        res.status(400).send({message: error.errors})
+        let _message = ''
+        for (let i in error.errors) {
+            _message += error.errors[i].properties.message + "\n"
+        }
+        res.status(400).send({message: _message})
     }
 }
 
