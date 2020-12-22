@@ -72,7 +72,7 @@ async function createReservation(req, res, next) {
                 }
         });
     } catch (error) {
-        res.status(400).send({message: error})
+        res.status(400).send({message: 'Algo salió mal'})
     }
 }
 
@@ -132,7 +132,7 @@ async function updateReservation( req, res, next ) {
         $set: req.body
     }, (err, data) => {
         if(err) {
-            next(err)
+            res.status(400).send({message: 'Algo salió mal'})
         } else {
             res.json({message: 'Datos actualizados exitosamente', data })
         }

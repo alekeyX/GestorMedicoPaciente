@@ -20,7 +20,7 @@ async function createPatient(req, res) {
             image = req.file.path
         }
         if (!validator.isEmail(req.body.email)) {
-            return res.status(400).send({message: 'Correo invalido'})
+            return res.status(400).send({message: 'Correo inválido'})
         }
         const patient = new Patient ({
             _id: new mongoose.Types.ObjectId(),
@@ -47,7 +47,11 @@ async function createPatient(req, res) {
             message: "Paciente registrado satisfactoriamente!",
         })
     } catch (error) {
-        res.status(400).send({message: error})
+        let _message = ''
+        for (let i in error.errors) {
+            _message += error.errors[i].properties.message + "\n"
+        }
+        res.status(400).send({message: _message})
     }
 }
 
@@ -115,13 +119,17 @@ async function updatePatient( req, res, next ) {
     } else {
         image = req.file.path
     }
-    _medic = req.body.medic_id
+    if (!validator.isEmail(req.body.email)) {
+        return res.status(400).send({message: 'Correo inválido'})
+    }
     await Patient.findByIdAndUpdate(req.params.id, {
         $set: req.body, password: password, imagePath: image,
         },  
     (err, data) => {
         if(err) {
-            next(err)
+            if (err.codeName = 'DuplicateKey') {
+                return res.status(400).send({message: 'Usuario o correo duplicado'})
+            }
         } else {
             res.json({message: 'Datos actualizados exitosamente', data })
         }
