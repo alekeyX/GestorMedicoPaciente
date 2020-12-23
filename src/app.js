@@ -6,13 +6,6 @@ const cors = require('cors')
 const path = require('path')
 const router = require('./routes/index')
 const socket = require('./controllers/chat')
-// TODO express-validator // Para validaciones en de campos en el req.body
-
-// const corsOptions = {
-//   origin: 'http://localhost:4200',
-//   optionsSuccessStatus: 200,
-//   credentials: true
-// };
 
 // Setup Express.js
 const app = express()
@@ -22,7 +15,6 @@ app.use(cors())
 app.use(morgan('dev'));
 // Inicializacion de socket.io
 socket.socketConnection(app)
-
 
 // API rutas
 app.use('/api', router)
@@ -37,17 +29,14 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 // Find 404 and hand over to error handler
 app.use((req, res, next) => {
   // Dominio que tengan acceso (ej. 'http://example.com')
-  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
-
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", true);
   // Metodos de solicitud que deseas permitir
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  
+  res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
   // Encabecedados que permites (ej. 'X-Requested-With,content-type')
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next(createError(404));
+  res.header("Access-Control-Allow-Headers", 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  next();
 });
 
 // error handler
