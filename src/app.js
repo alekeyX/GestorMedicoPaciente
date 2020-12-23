@@ -8,17 +8,17 @@ const router = require('./routes/index')
 const socket = require('./controllers/chat')
 // TODO express-validator // Para validaciones en de campos en el req.body
 
-const corsOptions = {
-  origin: 'http://localhost:4200',
-  optionsSuccessStatus: 200,
-  credentials: true
-};
+// const corsOptions = {
+//   origin: 'http://localhost:4200',
+//   optionsSuccessStatus: 200,
+//   credentials: true
+// };
 
 // Setup Express.js
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(morgan('dev'));
 // Inicializacion de socket.io
 socket.socketConnection(app)
