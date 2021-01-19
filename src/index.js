@@ -14,6 +14,6 @@ mongoose.connect(db.db, {
     console.log('Conexion a la base de datos establecida...');
 
     app.listen(db.port, () => {
-        console.log(`API REST corriendo en mongodb+srv:${db.port}`);
+        console.log(`API REST corriendo en localhost:${db.port}`);
     })
 })
