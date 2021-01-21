@@ -94,6 +94,37 @@ function getAll (req, res, next) {
     })
 }
 
+// Encontrar a varios médicos por id 
+function getMedicsbyIds (req, res, next) {
+    // Recibe array de id's y buscar un medico por cada id y guardarlos en otro array
+    let medics_id = new Array()
+    let medics = new Array()
+    let _id = ''
+    let j = 0
+    for (var i in req.params.id) {
+        if(req.params.id[i] != ',') {
+            _id += req.params.id[i]
+        } else {
+            medics_id.push(_id)
+            _id = ''
+        }
+    }
+    medics_id.push(_id)
+    while (j < medics_id.length) {
+        Medic.findById( medics_id[j], (error, data) => {
+            if (error){
+                next(error)
+            } else {
+                medics.push(data)
+                if(medics.length == medics_id.length){
+                    res.json(medics)
+                }
+            }
+        })
+        j++
+    }
+}
+
 // Actualizar médico
 async function updateMedic( req, res, next ) {
     // const password = await bcrypt.hash(req.body.password, 8)
@@ -138,6 +169,7 @@ module.exports = {
     signIn,
     getById,
     getAll,
+    getMedicsbyIds,
     updateMedic,
     deleteMedic
 }

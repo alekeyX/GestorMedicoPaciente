@@ -44,6 +44,7 @@ router.post('/medic', upload.single('imagePath'), auth, medicCtrl.createMedic )
 router.post('/medic/signin', medicCtrl.signIn )
 router.put('/medic/:id', auth, upload.single('imagePath'), medicCtrl.updateMedic )
 router.get('/medic', auth, medicCtrl.getAll )
+router.get('/medics/:id', auth, medicCtrl.getMedicsbyIds )
 router.get('/medic/:id', auth, medicCtrl.getById )
 router.delete('/medic/:id', auth, medicCtrl.deleteMedic )
 
