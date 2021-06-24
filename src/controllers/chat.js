@@ -17,22 +17,26 @@ function socketConnection(app){
 
         // Unirse a un room
         socket.on('joinRoom', (room) => {
+            console.log('join room');
             socket.join(room);
         })
 
         // Salir de un room
         socket.on('leaveRoom', (room) => {
+            console.log('leave room');
             socket.leave(room);
         })
 
         // Guardar mensaje en la base de datos
         socket.on('new-message', async (message, room) => {
+            console.log('give message');
             crearMsg(message)
             // devolver mensajes de la bd
             let messages = await Message.find({patient_id: message.patient_id, 
                 medic_id: message.medic_id})
             //     .limit(20)
             //     .sort({$natural:-1})
+            console.log('get message');
             io.to(room).emit('new-message', messages)
         })
 

@@ -1,79 +1,84 @@
-// Modelo de historia
 const Reservation = require('../models/Reservation')
 const sortBy = require('sort-by')
 const moment = require('moment');
+
 // Crear un registro
 async function createReservation(req, res, next) {
     try {
-        // Convervir los dias del body en valor numerico
-        req.body.days.forEach(day => {
-            var selectDay
+        // Convertimos las fechas del body en formato de moment
+        let date = moment().format('YYYY-MM-DD')
+        var from = moment(req.body.dateStart)
+        from.format('YYYY/MM/DD')
+        var to = moment(req.body.dateEnd)
+        to.format('YYYY/MM/DD')
 
-            switch (day) {
-                case 'Lunes':
-                    selectDay = 1
-                    break;
-                case 'Martes':
-                    selectDay = 2
-                    break;
-                case 'Miércoles':
-                    selectDay = 3
-                    break;
-                case 'Jueves':
-                    selectDay = 4
-                    break;
-                case 'Viernes':
-                    selectDay = 5
-                    break;
-                case 'Sabado':
-                    selectDay = 6
-                    break;
-                case 'Domingo':
-                    selectDay = 7
-                    break;
-            }
-
-            // Convertimos las fechas del body en formato de moment
-            let date = moment().format('YYYY-MM-DD')
-            let start = req.body.dateStart
-            let end = req.body.dateEnd
-            var from = moment(start)
-            from.format('YYYY/MM/DD')
-            var to = moment(end)
-            to.format('YYYY/MM/DD')
-            
-            // Verificar si la fecha para reservas es aun vigente
-            if(moment(date).isBefore(to)) {
+        // Verificar si la fecha para reservas es aun vigente
+        if(moment(date).isBefore(to)) {
+            req.body.days.forEach(day => {
+                let dayValue = parseDay(day)
+                console.log(day);
                 // Ir sumando un dia desde la fecha inicial hasta la fecha final
                 while (!from.isAfter(to)) {
                     // Comparar si el dia es un dia elegido por el medico para tener reservas
-                    if (from.day() === selectDay) {
-                            req.body.hours.forEach(hour => { 
-                                // Guardar un registro por cada dia y hora habiles elegidas por el usuario   
-                                const reserva = new Reservation ({
-                                    days: day,
-                                    dateStart: req.body.dateStart,
-                                    dateEnd: req.body.dateEnd,
-                                    date: from,
-                                    hours: hour,
-                                    enable: req.body.enable,
-                                    available: req.body.available,
-                                    patient_id: '',
-                                    medic_id: req.body.medic_id
-                                })
-                                reserva.save()
-                            });
-                            res.send({message: 'Fechas habilitadas exitosamente!'})
-                        }
-                        from.add(1, 'days')
+                    if (from.day() === dayValue) {
+                        req.body.hours.forEach(hour => { 
+                            // Guardar un registro por cada dia y hora habiles elegidas por el usuario   
+                            const reserva = new Reservation ({
+                                days: day,
+                                dateStart: req.body.dateStart,
+                                dateEnd: req.body.dateEnd,
+                                date: from,
+                                hours: hour,
+                                enable: req.body.enable,
+                                available: req.body.available,
+                                patient_id: '',
+                                medic_id: req.body.medic_id
+                            })
+                            reserva.save()
+                        });
                     }
-                } else {
-                    res.status(201).send({message: 'Ya venció la fecha elegida'})
+                    from.add(1, 'days')
                 }
-        });
+                from = moment(req.body.dateStart)
+                from.format('YYYY/MM/DD')
+                to = moment(req.body.dateEnd)
+                to.format('YYYY/MM/DD')
+            });
+            res.json({message: 'Fechas habilitadas exitosamente!'})
+        } else {
+            res.status(201).send({message: 'Ya venció la fecha elegida'})
+        }
     } catch (error) {
         res.status(400).send({message: 'Algo salió mal'})
     }
+}
+
+function parseDay(day){
+    var selectDay
+    switch (day) {
+        case 'Lunes':
+            selectDay = 1
+            break;
+        case 'Martes':
+            selectDay = 2
+            break;
+        case 'Miércoles':
+            selectDay = 3
+            break;
+        case 'Jueves':
+            selectDay = 4
+            break;
+        case 'Viernes':
+            selectDay = 5
+            break;
+        case 'Sabado':
+            selectDay = 6
+            break;
+        case 'Domingo':
+            selectDay = 0
+            break;
+    }
+    return selectDay;
 }
 
 // Buscar por Id 
