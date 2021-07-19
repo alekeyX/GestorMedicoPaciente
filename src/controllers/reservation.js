@@ -122,6 +122,7 @@ function getReservation (req, res, next) {
 function getPatientReservation (req, res, next) {
     const _patient = req.params.id
     Reservation.find({patient_id: _patient})
+    .populate('medic_id')
     .exec()
     .then( reservations => {
         res.json(reservations)

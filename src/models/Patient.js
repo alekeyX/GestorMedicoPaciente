@@ -44,7 +44,7 @@ PatientSchema.methods.toJSON = function() {
 
 // Apply the uniqueValidator plugin to PatientSchema.
 PatientSchema.plugin(uniqueValidator, {
-    message: '{PATH} debe de ser único'
+    message: 'Código de paciente o correo ya existe.'
 });
 
 const Patient = mongoose.model('Patient', PatientSchema)
