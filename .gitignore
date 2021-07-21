@@ -1,6 +1,3 @@
-# folders
-/src/uploads
-
 # dependencies
 node_modules
 'npm-debug.log' 
