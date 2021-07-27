@@ -9,7 +9,7 @@ function socketConnection(app){
     const io = socketIO(server)
     
     server.listen(5000, () => {
-        console.log(`Socket listo y escuchando en http://localhost:${5000}`);
+        console.log(`Socket listo y escuchando en https://api-consultorio-web.herokuapp.com:${5000}`);
     })
     
     io.on('connection', (socket) => {
@@ -47,7 +47,7 @@ function socketConnection(app){
 }
 
 // crear mensaje
-async function crearMsg (req) {
+function crearMsg (req) {
     try {
         const msg = new Message ({
             _id: new mongoose.Types.ObjectId(),
@@ -57,9 +57,10 @@ async function crearMsg (req) {
             msg: req.msg,
             createdAt: Date()
         });
-        await msg.save()
+        msg.save()
     } catch (error) {
         console.log(error);
+        next(error)
     }
 }
 
