@@ -8,8 +8,8 @@ function socketConnection(app){
     const socketIO = require('socket.io')
     const io = socketIO(server)
     
-    server.listen(5000, () => {
-        console.log(`Socket listo y escuchando en https://api-consultorio-web.herokuapp.com:${5000}`);
+    server.listen(15522, () => {
+        console.log(`Socket listo y escuchando en https://api-consultorio-web.herokuapp.com:${15522}`);
     })
     
     io.on('connection', (socket) => {
