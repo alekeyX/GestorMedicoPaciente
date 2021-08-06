@@ -1,7 +1,6 @@
 let http = require('http');
 const mongoose = require('mongoose')
 const Message = require('../models/Message');
-const db = require('../db/database')
 
 
 function socketConnection(app){
@@ -9,8 +8,8 @@ function socketConnection(app){
     const socketIO = require('socket.io')
     const io = socketIO(server)
     
-    server.listen(db.port, () => {
-        console.log(`Socket listo y escuchando en https://api-consultorio-web.herokuapp.com:${db.port}`);
+    server.listen(5150, () => {
+        console.log(`Socket listo y escuchando en el puerto:${5150}`);
     })
     
     io.on('connection', (socket) => {
