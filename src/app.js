@@ -1,7 +1,7 @@
 // Modulos requeridos
 const express = require('express')
 const bodyParser = require('body-parser')
-// const morgan = require('morgan')
+const morgan = require('morgan')
 const cors = require('cors')
 const path = require('path')
 const router = require('./routes/index')
@@ -12,7 +12,7 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 // Inicializacion de socket.io
 socket.socketConnection(app)
 

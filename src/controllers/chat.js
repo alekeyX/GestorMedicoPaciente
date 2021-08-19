@@ -8,8 +8,8 @@ function socketConnection(app){
     const socketIO = require('socket.io')
     const io = socketIO(server)
     
-    server.listen(5150, () => {
-        console.log(`Socket listo y escuchando en el puerto:${5150}`);
+    server.listen(18000, () => {
+        console.log(`Socket listo y escuchando en el puerto:${18000}`);
     })
     
     io.on('connection', (socket) => {
@@ -28,17 +28,10 @@ function socketConnection(app){
         })
 
         // Guardar mensaje en la base de datos
-        socket.on('new-message', async (message, room) => {
-            console.log('give message');
-            crearMsg(message)
-            // devolver mensajes de la bd
-            let messages = await Message.find({patient_id: message.patient_id, 
-                medic_id: message.medic_id})
-            //     .limit(20)
-            //     .sort({$natural:-1})
-            console.log('get message');
-            io.to(room).emit('new-message', messages)
-        })
+        // socket.on('new-message', async (message, room) => {
+        //     console.log('give message');
+        //     crearMsg(message)
+        // })
 
         socket.on('disconnect', function() {
             console.log("user disconnected");
@@ -47,20 +40,20 @@ function socketConnection(app){
 }
 
 // crear mensaje
-function crearMsg (req) {
+async function crearMsg(req, res) {
     try {
         const msg = new Message ({
             _id: new mongoose.Types.ObjectId(),
-            medic_id: req.medic_id,
-            patient_id: req.patient_id,
-            from: req.from,
-            msg: req.msg,
+            medic_id: req.body.medic_id,
+            patient_id: req.body.patient_id,
+            from: req.body.from,
+            msg: req.body.msg,
             createdAt: Date()
         });
-        msg.save()
+        await msg.save()
+        res.status(201).send({message: "mensaje recibido!"})
     } catch (error) {
-        console.log(error);
-        next(error)
+        res.status(400).send({message: _message})
     }
 }
 
@@ -80,5 +73,6 @@ function getAll (req, res, next) {
 
 module.exports = {
     socketConnection,
-    getAll
+    getAll,
+    crearMsg
 }

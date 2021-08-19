@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 // Multer Mime Type Validation
 var upload = multer({
   storage: storage,
-  limits: { fileSize: 10000000 },
+  limits: { fileSize: 1000000000 },
   fileFilter: (req, file, cb) => {
     if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
       cb(null, true);
@@ -76,6 +76,7 @@ router.get('/reservation/:id', auth,  reservationCtrl.getById )
 router.delete('/reservation/:id', auth,  reservationCtrl.deleteReservation )
 
 //  Rutas de chat
-router.get('/chat/:to/:from', chatCtrl.getAll)
+router.post('/chat', auth, chatCtrl.crearMsg )
+router.get('/chat/:to/:from', auth, chatCtrl.getAll)
 
 module.exports = router;
