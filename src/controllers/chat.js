@@ -28,10 +28,11 @@ function socketConnection(app){
         })
 
         // Guardar mensaje en la base de datos
-        // socket.on('new-message', async (message, room) => {
-        //     console.log('give message');
-        //     crearMsg(message)
-        // })
+        socket.on('new-message', async (message, room) => {
+            console.log('give message');
+            crearMsg(message)
+            io.to(room).emit('new-message')
+        })
 
         socket.on('disconnect', function() {
             console.log("user disconnected");
@@ -40,20 +41,20 @@ function socketConnection(app){
 }
 
 // crear mensaje
-async function crearMsg(req, res) {
+function crearMsg (req) {
     try {
         const msg = new Message ({
             _id: new mongoose.Types.ObjectId(),
-            medic_id: req.body.medic_id,
-            patient_id: req.body.patient_id,
-            from: req.body.from,
-            msg: req.body.msg,
+            medic_id: req.medic_id,
+            patient_id: req.patient_id,
+            from: req.from,
+            msg: req.msg,
             createdAt: Date()
         });
-        await msg.save()
-        res.status(201).send({message: "mensaje recibido!"})
+        msg.save()
     } catch (error) {
-        res.status(400).send({message: _message})
+        console.log(error);
+        next(error)
     }
 }
 
