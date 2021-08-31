@@ -113,17 +113,21 @@ function getPatient (req, res, next) {
 
 // Actualizar paciente
 async function updatePatient( req, res, next ) {
-    const password = await bcrypt.hash(req.body.password, 8)
-    if( !req.file ){
-        image = req.body.imagePath
+    if (req.body.withoutImage !== 'none'){
+        if( !req.file ){
+            image = req.body.imagePath
+        } else {
+            image = req.file.path
+        }
     } else {
-        image = req.file.path
+        image = 'none'
+        fs.unlink(path.resolve(req.body.imagePath))
     }
     if (!validator.isEmail(req.body.email)) {
         return res.status(400).send({message: 'Correo inválido'})
     }
     await Patient.findByIdAndUpdate(req.params.id, {
-        $set: req.body, password: password, imagePath: image,
+        $set: req.body, imagePath: image,
         },  
     (err, data) => {
         if(err) {
@@ -134,6 +138,19 @@ async function updatePatient( req, res, next ) {
             res.json({message: 'Datos actualizados exitosamente', data })
         }
     })
+}
+
+// Cambiar password
+async function changePassword(req, res, next) {
+    const _password = await bcrypt.hash(req.body.password, 8)
+    await Patient.findOneAndUpdate(
+        { _id: req.params.id }, 
+        { $set: { password: _password}}
+    )
+    .then(() => {
+        res.json({message: 'Contraseña cambiada'})
+    })
+    .catch((err) => next(err))
 }
 
 // Id de medico se adiciona a un paciente
@@ -172,5 +189,6 @@ module.exports = {
     updatePatient,
     deletePatient,
     getPatient,
-    medicAddPatient
+    medicAddPatient,
+    changePassword
 }
