@@ -10,6 +10,7 @@ const ReservationSchema = mongoose.Schema ({
     available:  { type: Boolean },
     patient_id: { type: String },
     medic_id:   { type: mongoose.Schema.Types.ObjectId, ref: 'Medic' },
+    patient_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' }
 }, {
     timestamps: true
 })

@@ -17,7 +17,7 @@ async function createHistory(req, res, next) {
                     if (err) {
                         next(err)
                     } else {
-                        res.status(201).send({ message: 'Historia registrada satisfactoriamente!' })
+                        res.status(201).send({ history, message: 'Historia registrada satisfactoriamente!' })
                     }
                 })
             }
@@ -35,13 +35,13 @@ function getById(req, res, next ) {
         } else {
             res.json(data)
         }
-    }).populate('patient_id')
+    }).populate('exam_id').populate('diagnostic_id').populate('patient_id')
 }
 
 // Encontrar a todos los historiales
 function getAll (req, res, next) {
     History.find()
-    .populate('patient_id')
+    .populate('exam_id').populate('diagnostic_id').populate('patient_id')
     .then( historys => {
         historys.sort(sortBy('createdAt'))
         res.json(historys)
@@ -55,7 +55,7 @@ function getAll (req, res, next) {
 function getHistory (req, res, next) {
     const _patient = req.params.id
     History.find({patient_id: _patient})
-    .populate('patient_id')
+    .populate('exam_id').populate('diagnostic_id').populate('patient_id')
     .exec()
     .then( historys => {
         res.json(historys)
@@ -79,7 +79,7 @@ async function updateHistory( req, res, next ) {
     })
 }
 
-// Eliminar paciente
+// Eliminar historia
 function deleteHistory( req, res, next ) {
     History.findByIdAndDelete( req.params.id, (err, data) => {
         if(err) {

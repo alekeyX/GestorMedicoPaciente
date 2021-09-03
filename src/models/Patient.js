@@ -19,7 +19,8 @@ const PatientSchema = mongoose.Schema ({
     address:     { type: String },
     phone:       { type: String },
     imagePath:   { type: String },
-    medic_id:    [{ type: String }],
+    // medic_id:    [{ type: String }],
+    medic_id:    [{ type: mongoose.Schema.Types.ObjectId, ref: 'Medic' }],
     token:       { type: String }
 }, {
     timestamps: true
