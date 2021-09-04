@@ -26,7 +26,7 @@ function getById(req, res, next ) {
 }
 
 async function updateDiagnostic( req, res, next ) {
-    await Diagnostic.findByIdAndUpdate(req.body._id, {
+    await Diagnostic.findByIdAndUpdate(req.params.id, {
         $set: req.body
     }, (err, data) => {
         if(err) {

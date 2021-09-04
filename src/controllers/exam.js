@@ -30,7 +30,7 @@ function getById(req, res, next) {
 // Actualizar historial
 async function updateExam(req, res, next) {
     await Exam.findByIdAndUpdate(
-        req.body.exam_id,
+        req.params.id,
         {
             $set: req.body,
         },
