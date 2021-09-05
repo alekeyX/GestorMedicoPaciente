@@ -83,12 +83,13 @@ function getById(req, res, next ) {
         } else {
             res.json(data)
         }
-    })
+    }).populate('medic_id')
 }
 
 // Encontrar a todos los pacientes
 function getAll (req, res, next) {
     Patient.find()
+    .populate('medic_id')
     .exec()
     .then( patients => {
         patients.sort(sortBy('username', 'firstName'))
@@ -101,8 +102,10 @@ function getAll (req, res, next) {
 
 // Encontrar a todos los pacientes por id de médico
 function getPatient (req, res, next) {
+    const ObjectId = mongoose.Types.ObjectId; 
     const _medic = req.params.id
-    Patient.find({medic_id: _medic})
+    Patient.find({medic_id: new ObjectId(_medic)})
+    .populate('medic_id')
     .then( patients => {
         res.json(patients)
     })

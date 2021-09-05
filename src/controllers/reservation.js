@@ -16,7 +16,6 @@ async function createReservation(req, res, next) {
         if(moment(date).isBefore(to)) {
             req.body.days.forEach(day => {
                 let dayValue = parseDay(day)
-                console.log(day);
                 // Ir sumando un dia desde la fecha inicial hasta la fecha final
                 while (!from.isAfter(to)) {
                     // Comparar si el dia es un dia elegido por el medico para tener reservas
@@ -25,13 +24,10 @@ async function createReservation(req, res, next) {
                             // Guardar un registro por cada dia y hora habiles elegidas por el usuario   
                             const reserva = new Reservation ({
                                 days: day,
-                                dateStart: req.body.dateStart,
-                                dateEnd: req.body.dateEnd,
                                 date: from,
                                 hours: hour,
                                 enable: req.body.enable,
                                 available: req.body.available,
-                                patient_id: '',
                                 medic_id: req.body.medic_id
                             })
                             reserva.save()
@@ -89,13 +85,13 @@ function getById(req, res, next ) {
         } else {
             res.json(data)
         }
-    })
+    }).populate('medic_id').populate('patient_id')
 }
 
 // Encontrar a todos las reservas
 function getAll (req, res, next) {
     Reservation.find()
-    .populate('medic_id')
+    .populate('medic_id').populate('patient_id')
     .then( reservations => {
         reservations.sort(sortBy('date', 'hours'))
         res.json(reservations)
@@ -109,7 +105,7 @@ function getAll (req, res, next) {
 function getReservation (req, res, next) {
     const _medic = req.params.id
     Reservation.find({medic_id: _medic})
-    .populate('medic_id')
+    .populate('medic_id').populate('patient_id')
     .exec()
     .then( reservations => {
         res.json(reservations)
@@ -122,7 +118,7 @@ function getReservation (req, res, next) {
 function getPatientReservation (req, res, next) {
     const _patient = req.params.id
     Reservation.find({patient_id: _patient})
-    .populate('medic_id')
+    .populate('medic_id').populate('patient_id')
     .exec()
     .then( reservations => {
         res.json(reservations)
