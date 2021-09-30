@@ -5,16 +5,16 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path')
 const router = require('./routes/index')
-const socket = require('./controllers/chat')
 
 // Setup Express.js
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/templates/index.html'))
+})
 // app.use(morgan('dev'));
-// Inicializacion de socket.io
-socket.socketConnection(app)
 
 // API rutas
 app.use('/api', router)

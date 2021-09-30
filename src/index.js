@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const app = require('./app')
 const db = require('./db/database')
+const socket = require('./controllers/chat')
 
 mongoose.connect(db.db, {
     useNewUrlParser: true,
@@ -13,7 +14,12 @@ mongoose.connect(db.db, {
     }
     console.log('Conexion a la base de datos establecida...');
 
-    app.listen(db.port, () => {
+    let server = require('http').createServer(app)
+    , io = require('socket.io').listen(server);
+
+    server.listen(db.port, () => {
         console.log(`API REST corriendo en https://api-consultorio-web.herokuapp.com:${db.port}`);
     })
+
+    socket.socketConnection(io)
 })

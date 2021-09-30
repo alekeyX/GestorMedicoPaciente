@@ -1,16 +1,7 @@
-let http = require('http');
 const mongoose = require('mongoose')
 const Message = require('../models/Message');
 
-
-function socketConnection(app){
-    const server = http.Server(app)
-    const socketIO = require('socket.io')
-    const io = socketIO(server)
-    
-    server.listen(18000, () => {
-        console.log(`Socket listo y escuchando en el puerto:${18000}`);
-    })
+function socketConnection(io){
     
     io.on('connection', (socket) => {
         console.log('user connected');
