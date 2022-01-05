@@ -18,7 +18,7 @@ mongoose.connect(db.db, {
     , io = require('socket.io').listen(server);
 
     server.listen(db.port, () => {
-        console.log(`API REST corriendo en https://api-consultorio-web.herokuapp.com:${db.port}`);
+        console.log(`API REST corriendo en localhost:${db.port}`);
     })
 
     socket.socketConnection(io)
